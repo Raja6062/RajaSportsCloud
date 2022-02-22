@@ -66,7 +66,7 @@ function AnotherPlayer(props) {
         setUserData(null);
         props.history.push("/")
     };
-    const pic = 'https://nodeserver.mydevfactory.com:1447/'
+    const pic = 'https://nodeserver.mydevfactory.com:1447/profilepic/'
     const teamSelect = () => {
         const user = JSON.parse(localStorage.getItem('user'));
         if (user) {
@@ -343,7 +343,7 @@ function AnotherPlayer(props) {
 
                                                         {player.member_id.profile_image == null ?
                                                             <img src={UserProfile} alt="" /> :
-                                                            <img src={`${pic}${player.member_id.profile_image}`} alt="" />
+                                                            <img src={`${pic}${player.member_id.profile_image}`} alt="" style={{height:"70px",width:"70px"}}/>
                                                         }
                                                         <span>{player.member_id.fname}{player.member_id.lname}</span>
                                                     </span>
@@ -376,7 +376,7 @@ function AnotherPlayer(props) {
                                                                             <span>
                                                                                 {player.member_id.profile_image == null ?
                                                                                     <img src={UserProfile} alt="" /> :
-                                                                                    <img src={`${pic}${player.member_id.profile_image}`} alt="" />
+                                                                                    <img src={`${pic}${player.member_id.profile_image}`} alt="" style={{height:"70px",width:"70px"}}/>
                                                                                 }
                                                                                 <span>{player.member_id.fname}{player.member_id.lname}</span>
                                                                             </span>

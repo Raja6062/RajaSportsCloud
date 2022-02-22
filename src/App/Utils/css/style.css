@@ -2257,3 +2257,22 @@ span {
 .Going1{
     background-color: "green";
 }
+:target {
+    color: red;
+  }
+  :target {
+    color: red;
+  }
+  :target {
+    color: red;
+  }
+  .focus1:focus {
+    background-color: green;
+  }
+  .focus2:focus {
+    background-color: gray;
+  }
+  .focus3:focus {
+    background-color: red;
+  }
+

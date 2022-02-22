@@ -65,7 +65,8 @@ function ManagerTeamShop(props) {
     setUserData(userLocal);
     updateProfile()
     dropdownMenu()
-    teamShopData()
+    setTeamDropdown()
+    teamShopData(teamDropdown)
 
    
 
@@ -79,6 +80,7 @@ function ManagerTeamShop(props) {
     props.history.push("/")
   };
   const pic = 'https://nodeserver.mydevfactory.com:1447/'
+  const pic1 = "https://nodeserver.mydevfactory.com:1447/profilepic/"
 
   const updateProfile = () => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -208,7 +210,7 @@ function ManagerTeamShop(props) {
             if(res.status==200){
                 toast.success("Add Succecfull")
                 console.log("Add Image",res)
-                teamShopData(teamDropdown)
+                teamShopData(teamDropdown==null?dropdown[0]._id :teamDropdown)
 
             }
 
@@ -221,6 +223,7 @@ function ManagerTeamShop(props) {
         })
 
   }
+  console.log("team dropdown",teamDropdown)
 
   const handleChange = event => {
     console.log("URL.createObjectURL(event.target.files[0])---->", URL.createObjectURL(event.target.files[0]));
@@ -255,6 +258,7 @@ function ManagerTeamShop(props) {
           console.log("delete shop  data", res)
           if (res.response_code == 2000) {
             console.log("deleted data", res)
+            teamShopData(teamDropdown==null?dropdown[0]._id :teamDropdown)
           }
           if (res.response_code == 4000) {
             dispatch(logoutUser(null))
@@ -264,7 +268,7 @@ function ManagerTeamShop(props) {
           }
 
 
-          teamShopData(teamDropdown)
+          
 
         })
     }
@@ -321,6 +325,7 @@ function ManagerTeamShop(props) {
                 toast.success("Edit Succecfull")
                 console.log("edit Image",res)
                 setModeValue(false)
+                teamShopData(teamDropdown==null?dropdown[0]._id :teamDropdown)
             }
 
             if (res.response_code == 4000) {
@@ -390,7 +395,7 @@ function ManagerTeamShop(props) {
                 <div class="profile-head-img">
                   {profilePic.profile_image == null ?
                     <img src={BigUserProfile} alt="" /> :
-                    <img src={`${pic}${profilePic.profile_image}`} alt="" />
+                    <img src={`${pic1}${profilePic.profile_image}`} alt="" />
                   }
 
                 </div>

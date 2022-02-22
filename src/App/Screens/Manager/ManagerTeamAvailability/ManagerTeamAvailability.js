@@ -11,6 +11,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import TimePicker from 'react-time-picker';
 import Modal from "react-bootstrap/Modal";
+import Button from 'react-bootstrap/Button';
 import "bootstrap/dist/css/bootstrap.min.css";
 import '../../../Utils/css/style.css';
 import '../../../Utils/css/responsive.css';
@@ -54,6 +55,14 @@ const ManagerTeamAvailability = () => {
     }])
     const divColor1 = divColor
     console.log("dataId console", dataIdVal)
+    const [checked, setChecked] = useState(false);
+    const [radioValue, setRadioValue] = useState('1');
+
+    const radios = [
+        { name: 'Active', value: '1' },
+        { name: 'Radio', value: '2' },
+        { name: 'Radio', value: '3' },
+    ];
 
 
     const colorArray = ["green", "gray", "red"]
@@ -287,10 +296,10 @@ const ManagerTeamAvailability = () => {
     console.log("color", divColor)
 
 
- const changeColor=i=>{
-    const goingcolor1 = { backgroundColor: "green" }
+    const changeColor = i => {
+        const goingcolor1 = { backgroundColor: "green" }
 
- }
+    }
 
 
 
@@ -392,10 +401,26 @@ const ManagerTeamAvailability = () => {
                                                 </td>
 
 
-                                                <td style={{ display: "flex", paddingLeft: "40%" }}>
-                                                    <div>
+                                                <td style={{ display: "flex", paddingLeft: "40%" }} key={data._id}>
+
+                                                
+                                                    <button class='focus1' >GOING</button>
+                                                    <button class='focus2' >MAY BE</button>
+                                                    <button class='focus3' >NO</button>
+                                                    
+
+                                                    {/* <Button variant="light" >Going</Button>{' '}
+                                                    <Button  onClick={(e)=>{
+
+                                                    }}>May Be</Button>{' '}
+                                                    <Button  variant="light">No</Button>{' '} */}
+
+                                                    {/* <Button variant="primary">Primary</Button>{' '}
+                                                    <Button variant="secondary">Secondary</Button>{' '}
+                                                    <Button variant="success">Success</Button>{' '} */}
+                                                    {/* <div>
                                                     <input type="checkbox" style={{ width: "20px", height: "20px" }}/>
-                                                    </div>
+                                                    </div> */}
 
 
                                                     {/* {

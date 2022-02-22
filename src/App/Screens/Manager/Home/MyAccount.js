@@ -32,6 +32,7 @@ const MyAccount = () => {
         alert: false,
         post: false
     })
+    const [allUserDataList, setAlluserDatalist] = useState([])
     const [startDate, setStartDate] = useState(new Date());
     const dispatch = useDispatch()
 
@@ -43,32 +44,34 @@ const MyAccount = () => {
 
     const [valueDropDown, setValueDropDown] = useState("")
     const [eventType, setEventType] = useState()
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [birthday, setBirthday] = useState('')
-    const [gender, setGender] = useState('')
-    const [email, setEmail] = useState('')
-    const [type1, setType1] = useState('')
+    const [firstName, setFirstName] = useState(allUserDataList.fname)
+    const [lastName, setLastName] = useState(allUserDataList.lname)
+    const [birthday, setBirthday] = useState(allUserDataList.dob)
+    const [gender, setGender] = useState(allUserDataList.gender)
+    const [email, setEmail] = useState(allUserDataList.email)
+    const [type1, setType1] = useState(allUserDataList.apptype)
     const [type2, setType2] = useState('')
-    const [number1, setNumber1] = useState('')
-    const [number2, setNumber2] = useState('')
-    const [address1, setAddress1] = useState('')
-    const [address2, setAddress2] = useState('')
-    const [city, setCity] = useState('')
-    const [state1, setState1] = useState('')
-    const [zip, setZip] = useState('')
-    const [country, setCountry] = useState('')
+    const [number1, setNumber1] = useState(allUserDataList.phone)
+    const [number2, setNumber2] = useState(allUserDataList.alternative_phone)
+    const [address1, setAddress1] = useState(allUserDataList.address_line_one)
+    const [address2, setAddress2] = useState(allUserDataList.address_line_two)
+    const [city, setCity] = useState(allUserDataList.city)
+    const [state1, setState1] = useState(allUserDataList.state)
+    const [zip, setZip] = useState(allUserDataList.zip)
+    const [country, setCountry] = useState(allUserDataList.country)
     const [private1, setPrivate1] = useState(false)
     const [private2, setPrivate2] = useState(false)
     const [private3, setPrivate3] = useState(false)
     const [private4, setPrivate4] = useState(false)
     const [private5, setPrivate5] = useState(false)
-    const [allUserDataList, setAlluserDatalist] = useState([])
+   
     const [profilePicture, setProfilePicture] = useState('')
     const [profilePic, setProfilePic] = useState([])
 
     const [file, Profile] = useState();
     const pic = 'https://nodeserver.mydevfactory.com:1447/profilepic/'
+    console.log("email",email)
+    console.log("fname",firstName ==""? allUserDataList.fname:firstName)
 
 
     useEffect(() => {
@@ -121,7 +124,7 @@ const MyAccount = () => {
         console.log('imagepath', URL.createObjectURL(event.target.files[0]));
         Profile(event.target.files[0]);
         setProfilePicture(event.target.files[0])
-        EditUserImage()
+        EditUserImage(event.target.files[0])
 
 
     }
@@ -249,24 +252,24 @@ const MyAccount = () => {
                 'x-access-token': user.authtoken
             },
             body: JSON.stringify({
-                "firstName": firstName,
-                "lastName": lastName,
-                "email": email,
-                "dob": birthday,
-                "phone": number1,
-                "gender": gender,
-                "alternative_phone": number2,
-                "address_line_one": address1,
-                "address_line_two": address2,
-                "city": city,
-                "state": state1,
-                "zip": zip,
-                "country": country,
-                "hide_age": private1,
-                "email_is_private": private5,
-                "alternative_phone_is_private": private2,
-                "phone_is_private": private3,
-                "address_is_private": private4
+                "firstName": firstName ==null? allUserDataList.fname:firstName,
+                "lastName": lastName ==null? allUserDataList.lname:lastName,
+                "email": email ==null? allUserDataList.email:email,
+                "dob": birthday ==null? allUserDataList.dob:birthday,
+                "phone": number1 ==null ? allUserDataList.phone:number1,
+                "gender": gender ==null? allUserDataList.gender:gender,
+                "alternative_phone": number2 ==null? allUserDataList.alternative_phone:number2,
+                "address_line_one": address1 ==null? allUserDataList.address_line_one:address1,
+                "address_line_two": address2 ==null? allUserDataList.address_line_two:address2,
+                "city": city ==null? allUserDataList.city:city,
+                "state": state1 ==null? allUserDataList.state:state1,
+                "zip": zip ==null? allUserDataList.zip:zip,
+                "country": country ==null? allUserDataList.country:country,
+                "hide_age": private1 ,
+                "email_is_private": private5 ,
+                "alternative_phone_is_private": private2 ,
+                "phone_is_private": private3 ,
+                "address_is_private": private4 
             })
         };
         fetch('https://nodeserver.mydevfactory.com:1447/api/edit-user-details', requestOptions)
@@ -289,11 +292,11 @@ const MyAccount = () => {
 
     }
 
-    const EditUserImage = () => {
+    const EditUserImage = (value) => {
         const user = JSON.parse(localStorage.getItem('user'));
-        console.log("image in formdata", profilePicture)
+        console.log("image in formdata", value)
         const formData = new FormData();
-        formData.append('profile_image', profilePicture);
+        formData.append('profile_image', value);
         axios('https://nodeserver.mydevfactory.com:1447/api/update-user-profile-image',
             {
                 method: "POST",
@@ -309,6 +312,7 @@ const MyAccount = () => {
                 if (res.status == 200) {
                     toast.success("Edit Succecfull")
                     console.log("edit Image", res)
+                    updateProfile()
                 }
 
                 if (res.response_code == 4000) {
@@ -328,13 +332,7 @@ const MyAccount = () => {
             toast.error("Please Provide  Email", {
                 position: "top-center"
             })
-            if (validator.isEmail(email)) {
-                console.log(email)
-            } else {
-                toast.error("Please Provide Valid Email", {
-                    position: "top-center"
-                })
-            }
+            
         }
 
 
@@ -529,17 +527,17 @@ const MyAccount = () => {
                                         <div class="prefarance-form-list">
                                             <label>Birthday</label>
                                             <div class="input-select" >
-                                                <input type="date" class="input-select" onChange={(e) => setBirthday(e.target.value)} style={{ border: "none" }} defaultValue={private1 ? "" : allUserDataList.dob} />
+                                                <input type="date" class="input-select" onChange={(e) => setBirthday(e.target.value)} style={{ border: "none" }} defaultValue={private1 ? "" : allUserDataList.dob} value={private1 ? "" : birthday}/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="prefarance-form-list">
                                             <label>Gender</label>
-                                            <select class="input-select" onChange={(e) => setGender(e.target.value)} defaultValue={allUserDataList.gender}>
-                                                <option>Select</option>
-                                                <option>Male</option>
-                                                <option>Female</option>
+                                            <select class="input-select" onChange={(e) => setGender(e.target.value)} defaultChecked={allUserDataList.gender}>
+                                                <option >{allUserDataList.gender}</option>
+                                                <option >{allUserDataList.gender=="Male"? "Female":"Male"}</option>
+                                                
                                             </select>
 
                                         </div>
@@ -702,7 +700,7 @@ const MyAccount = () => {
                                     <div class="col-md-6">
                                         <div class="prefarance-form-list">
                                             <button class="add-links" onClick={() => history.push("/")}>CANCEL</button>
-                                            <button class="add-links" style={{ backgroundColor: "#181717", marginLeft: "5px" }} onClick={CheckValidatiion}>SAVE</button>
+                                            <button class="add-links" style={{ backgroundColor: "#181717", marginLeft: "5px" }} onClick={EditUserDetails}>SAVE</button>
                                         </div>
                                     </div>
                                 </div>

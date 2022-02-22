@@ -23,6 +23,7 @@ import UserProfile from "../../../images/user-profile.png"
 import { useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import { logoutUser } from "../../../Redux/Actions/auth";
+import BigUserProfile from "../../../images/big-user-profile.png"
 import validator from 'validator'
 
 
@@ -55,6 +56,10 @@ const AddPlayer = () => {
 
     const [valueDropDown, setValueDropDown] = useState("")
     const [eventType, setEventType] = useState()
+    const [profilePic, setProfilePic] = useState([])
+    const [team, setTeam] = useState([])
+    const [loader, setLoader] = useState(false)
+    const [playerType,setPlayerType]=useState(false)
 
     useEffect(() => {
 
@@ -63,11 +68,35 @@ const AddPlayer = () => {
         let userD = userLocal && userLocal._id ? true : false;
         setUser(userD);
         setUserData(userLocal);
-        playerData()
         dropdownMenu();
+        updateProfile()
 
 
     }, []);
+    const pic1 = "https://nodeserver.mydevfactory.com:1447/profilepic/"
+
+    const updateProfile = () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            let header = {
+                'authToken': user.authtoken
+
+            }
+            console.log('user', user)
+
+            Network('api/get-user-details', 'GET', header)
+                .then(async (res) => {
+                    console.log("new Profile Pic----", res)
+
+                    setProfilePic(res.response_data)
+                    setLoader(true)
+
+
+                })
+        }
+
+    }
+
 
     const playerData = () => {
         const user = JSON.parse(localStorage.getItem('user'));
@@ -89,13 +118,13 @@ const AddPlayer = () => {
                 "state": state,
                 "address": address,
                 "phone": phone,
-                "member_type": "NON-PLAYER",
+                "member_type": playerType ? "PLAYER" : "NON-PLAYER",
                 "jersey_number": jursey,
                 "position": position,
                 "family_member": [{ "name": "Krishna Das", "email": "angelinaKoli@gmail.com", "phone": 123453, "relation": "DAD" }]
             })
 
-          
+
         };
         fetch('https://nodeserver.mydevfactory.com:1447/api/add-player-roster', requestOptions)
             .then(response => response.json())
@@ -113,20 +142,27 @@ const AddPlayer = () => {
     }
 
 
+
     const CheckValidatiion = () => {
 
         if (email == null) {
             toast.error("Please Provide  Email", {
                 position: "top-center"
             })
+           
+        }
+        if(email){
             if (validator.isEmail(email)) {
                 console.log(email)
-            } else {
+            }
+            else {
                 toast.error("Please Provide Valid Email", {
                     position: "top-center"
                 })
             }
+
         }
+       
 
 
         if (fname == null) {
@@ -193,7 +229,7 @@ const AddPlayer = () => {
 
 
         playerData()
-        history.push("/teamroster")
+        
 
 
     }
@@ -314,42 +350,42 @@ const AddPlayer = () => {
     }
 
 
- 
+
 
     const deletePlayerData = (id) => {
         const user = JSON.parse(localStorage.getItem('user'));
         console.log("id-------------->", id)
-        const a= window.confirm('Are you sure you wish to delete this Data?') 
-    console.log("delete click")
-    if(a==true){
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': user.authtoken
-            },
-            body: JSON.stringify({
-                "id": id
-            })
-        };
-        fetch('https://nodeserver.mydevfactory.com:1447/api/delete-game-event', requestOptions)
-            .then(response => response.json())
-            .then((res) => {
-                console.log("delete Schedule  data", res)
-                if (res.response_code == 2000) {
-                    console.log("deleted data", res)
-                }
-                if (res.response_code == 4000) {
-                    dispatch(logoutUser(null))
-                    localStorage.removeItem("user");
-                    history.push("/")
-                    toast.error(res.response_message)
-                }
+        const a = window.confirm('Are you sure you wish to delete this Data?')
+        console.log("delete click")
+        if (a == true) {
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': user.authtoken
+                },
+                body: JSON.stringify({
+                    "id": id
+                })
+            };
+            fetch('https://nodeserver.mydevfactory.com:1447/api/delete-game-event', requestOptions)
+                .then(response => response.json())
+                .then((res) => {
+                    console.log("delete Schedule  data", res)
+                    if (res.response_code == 2000) {
+                        console.log("deleted data", res)
+                    }
+                    if (res.response_code == 4000) {
+                        dispatch(logoutUser(null))
+                        localStorage.removeItem("user");
+                        history.push("/")
+                        toast.error(res.response_message)
+                    }
 
 
-                teamSchedule()
+                    teamSchedule()
 
-            })
+                })
         }
 
     }
@@ -363,46 +399,69 @@ const AddPlayer = () => {
             <div class="dashboard-main-content">
                 <div class="dashboard-head">
                     <div class="teams-select">
-                        <button class="create-new-team" onClick={() => history.push("./CreateTeam")}>Create New Teams</button>
+                        <button class="create-new-team" onClick={() => {
+                            history.push("/CreateTeam")
+                        }}>Create New Teams</button>
+                        <select onChange={change} >
 
-                        <select onChange={change} value={teamDropdown == "" ? dropdown[0]?._id : teamDropdown} >
-                            {dropdown.map((dropdown) => {
-                                return (
-                                    <option value={dropdown._id}>{dropdown.team_name}</option>
-                                )
-                            })}
+                            {dropdown == null ? <option> Team1</option> :
+                                dropdown.map((team) => {
+                                    return (
+                                        <option key={team.id}>{team.team_name}</option>
+                                    )
+                                })}
                         </select>
-                        <select onClick={()=>{
-                    history.push("/MyAccount")
-                  }}>
-                  <option >Account</option>
-                  <option>Account 2</option>
-                  <option>Account 3</option>
-                </select>
-                    </div>
+                        <div className="dropBtn">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style={{ backgroundColor: "#2C2C2C", border: "none" }}>
+                                ACCOUNT
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={{ backgroundColor: "#484848", listStyle: "none", margin: "14px" }}>
+                                <li><a class="dropdown-item" href="#">Jayanta Karmakar</a></li>
+                                <Link to={{ pathname: "/MyAccount" }} >
+                                    <li><a class="dropdown-item" href="#">My Account</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Credit" }} >
+                                    <li><a class="dropdown-item" href="#">Credits</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Household" }} >
+                                    <li><a class="dropdown-item" href="#">My HouseHold</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/ManageTeam" }} >
+                                    <li><a class="dropdown-item" href="#">Manage My Team</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Biling" }} >
+                                    <li><a class="dropdown-item" href="#">Biling & Plans</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/CreateTeam" }} >
+                                    <li><a class="dropdown-item" href="#">Create New Team</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/SignOut" }} >
+                                    <li><a class="dropdown-item active" href="#">Sign Out</a></li>
+                                </Link>
 
+                            </ul>
+                        </div>
+                    </div>
                     <div class="profile-head">
-                        <div class="profile-head-name">{user ? user.fname : null}</div>
+                        {loader ?
+                            <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div> :
+                            <div class="profile-head-name">Loading...</div>}
+
                         <div class="profile-head-img">
-                            {
-                                user ?
-                                    <img src={user.profile_image} alt="" /> :
-                                    <img src={UserProfile} alt="" />
+                            {profilePic.profile_image == null ?
+                                <img src={BigUserProfile} alt="" /> :
+                                <img src={`${pic1}${profilePic.profile_image}`} alt="" />
                             }
 
                         </div>
                     </div>
-                    <div class="login-account">
-                        <ul>
-                            <li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li>
-                            {/* <li><a href="#" data-toggle="modal" data-target="#myModalregister" onClick={handleLogout}>Logout</a></li> */}
-                        </ul>
-                    </div>
+                    <div class="login-account"><ul><li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li></ul></div>
+
                 </div>
                 <div class="prefarance-box" style={{ overflow: "auto" }} >
-                    <ul class="nav nav-tabs" role="tablist">
+                    <ul class="nav nav-tabs" role="tablist" >
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab"><h1 style={{ color: "white", fontSize: "35px" }}>New Member</h1> </a>
+                            <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab"><h1 style={{ color: "white", fontSize: "29px" }}>New Member</h1> </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">Member Info</a>
@@ -413,7 +472,7 @@ const AddPlayer = () => {
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tabs-4" role="tab">Optional PLayer Details</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" href="#tabs-4" role="tab">
                             <div style={{ backgroundColor: "gray", borderRadius: "10px" }}>
                                 <h3 style={{ color: "white", padding: "10px" }}> Reordering People</h3>
                                 <p style={{ color: "white", padding: "10px" }}>In short, don't! Everyone receives the same information, regardless of their order in the list. Changing an email to another person's email address does not give them access. To invite some-one new, use the "Add New Family Member" button. <span style={{ color: "red" }}>Learn more</span> in our help center.</p>
@@ -446,7 +505,7 @@ const AddPlayer = () => {
                                         <div class="col-md-12">
                                             <div class="prefarance-form-list">
                                                 <label>Non Player</label>
-                                                <input type="checkbox" style={{ height: "15px", width: "17px" }} />
+                                                <input type="checkbox" style={{ height: "15px", width: "17px" }} onClick={()=>setPlayerType(!playerType)} />
                                                 <span style={{ color: "white" }}>This person is a non playing player of the team </span>
 
                                             </div>
@@ -525,7 +584,12 @@ const AddPlayer = () => {
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
                                                 <label>Gender</label>
-                                                <input type="text" class="input-select" onChange={(e) => setGender(e.target.value)} />
+                                                <select onChange={(e) => setGender(e.target.value)} class="input-select">
+                                                    <option>SELECT</option>
+                                                    <option>MALE</option>
+                                                    <option>FEMALE</option>
+                                                </select>
+                                                
 
                                             </div>
                                         </div>
@@ -534,7 +598,7 @@ const AddPlayer = () => {
                                             <div class="prefarance-form-list">
                                                 <label>Birthday</label>
                                                 <div class="input-select" >
-                                                <input type="date" class="input-select" onChange={(e) => setBirthday(e.target.value)} style={{border:"none"}}/>
+                                                    <input type="date" class="input-select" onChange={(e) => setBirthday(e.target.value)} style={{ border: "none" }} />
                                                 </div>
                                             </div>
                                         </div>
@@ -573,7 +637,7 @@ const AddPlayer = () => {
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
                                                 <button class="add-links">CANCEL</button>
-                                                <button class="add-links" style={{ backgroundColor: "#181717", marginLeft: "5px" }} onClick={CheckValidatiion}>SAVE</button>
+                                                <button class="add-links" style={{ backgroundColor: "#181717", marginLeft: "4px" }} onClick={CheckValidatiion}>SAVE</button>
                                             </div>
                                         </div>
                                     </div>

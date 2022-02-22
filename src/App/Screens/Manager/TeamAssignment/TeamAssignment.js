@@ -339,7 +339,7 @@ function TeamAssignments(props) {
             }
             console.log('user', user)
 
-            Network('api/all-player-list-by-team-id?team_id=60a51abfae9b3244cc9d1eae', 'GET', header)
+            Network('api/all-player-list-by-team-id?team_id='+teamDropdown, 'GET', header)
                 .then(async (res) => {
                     console.log("Volenteer ----", res)
                     setVolenteerData(res.response_data)
@@ -508,7 +508,7 @@ function TeamAssignments(props) {
 
     }
 
-
+console.log("volenteer",volenteerData)
 
 
 
@@ -644,11 +644,11 @@ function TeamAssignments(props) {
                                     <h2 style={{ color: "#524646", padding: "10px" }}>Volenteer</h2>
                                     <select onClick={volenteerId} style={{ width: "80%", height: "46px", borderRadius: "10px", backgroundColor: "white" }}>
                                         <option>Select Volenteer</option>
-                                        {volenteerData.map((volenteerData) => {
+                                        {volenteerData.member_id != null ? volenteerData.map((volenteerData) => {
                                             return (
                                                 <option value={`${volenteerData.member_id.fname}${volenteerData.member_id.lname}`}>{volenteerData.member_id.fname}{volenteerData.member_id.lname}</option>
                                             )
-                                        })}
+                                        }) :""}
 
                                     </select>
 
@@ -721,11 +721,11 @@ function TeamAssignments(props) {
                                     <h2 style={{ color: "#524646", padding: "10px" }}>Volenteer</h2>
                                     <select onClick={volenteerId} style={{ width: "80%", height: "46px", borderRadius: "10px", backgroundColor: "white" }}>
                                         <option>{assignment[id].volunteer}</option>
-                                        {volenteerData.map((volenteerData) => {
+                                        {volenteerData.member_id != null ? volenteerData.map((volenteerData) => {
                                             return (
                                                 <option value={`${volenteerData.member_id.fname}${volenteerData.member_id.lname}`}>{volenteerData.member_id.fname}{volenteerData.member_id.lname}</option>
                                             )
-                                        })}
+                                        }) :""}
 
                                     </select>
 

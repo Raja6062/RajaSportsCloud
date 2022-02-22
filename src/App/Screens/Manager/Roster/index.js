@@ -93,10 +93,12 @@ function ManagerRoster(props) {
         setUserData(userLocal);
         // teamRoster();
         dropdownMenu();
+        setTeamDropDown()
         updateProfile()
 
 
     }, []);
+    console.log("546433333333333")
     console.log("new player data", newplayerdata)
     const pic = 'https://nodeserver.mydevfactory.com:1447/'
 

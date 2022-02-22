@@ -9,6 +9,7 @@ import {
     useParams,
     useLocation
 } from "react-router-dom";
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { Network } from '../../../Services/Api';
 import '../../../Utils/css/style.css';
 import '../../../Utils/css/responsive.css';
@@ -52,7 +53,6 @@ const CreateTeam = (props) => {
         dropdownMenu()
 
 
-
     }, []);
     const handleLogout = () => {
         console.log("pruyuuuuuu", props);
@@ -81,7 +81,7 @@ const CreateTeam = (props) => {
 
     }
 
-    
+
     const dropdownMenu = () => {
         const user = JSON.parse(localStorage.getItem('user'));
         if (user) {
@@ -141,8 +141,6 @@ const CreateTeam = (props) => {
             .then(response => response.json())
             .then((res) => {
                 console.log("create team data", res)
-
-
                 if (res.response_code == 4000) {
                     dispatch(logoutUser(null))
                     localStorage.removeItem("user");
@@ -156,52 +154,22 @@ const CreateTeam = (props) => {
 
     const CheckValidatiion = () => {
 
-        if (teamName == null) {
-            toast.error("Please Provide Team Name", {
-                position: "top-center"
-            })
-        }
-        if (sport == null) {
-            toast.error("Please Provide Sport Name", {
-                position: "top-center"
-            })
-        }
-        if (timeZone == null) {
-            toast.error("Please Provide Time Zone", {
-                position: "top-center"
-            })
+        if (teamName && sport && timeZone && country && zip && language && parentName) {
+            createTeamData()
+
             return
         }
-        if (country == null) {
-            toast.error("Please Provide Country", {
-                position: "top-center"
-            })
-            return
-        }
-        if (zip == null) {
-            toast.error("Please Provide Zip Code", {
-                position: "top-center"
-            })
-            return
-        }
-        if (language == null) {
-            toast.error("Please Provide Language", {
-                position: "top-center"
-            })
-            return
-        }
-        if (parentName == null) {
-            toast.error("Please Provide Parents Name", {
-                position: "top-center"
-            })
-            return
+        else {
+            toast.error("Please Provide All Field")
+
         }
 
-        createTeamData()
-        history.push("/playerschdule")
+
+
 
 
     }
+
 
 
 
@@ -270,7 +238,7 @@ const CreateTeam = (props) => {
                             <div class="login-account"><ul><li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li></ul></div>
 
                         </div>
-                        <div class="prefarance-box player-info" style={{padding:"10px"}}>
+                        <div class="prefarance-box player-info" style={{ padding: "10px" }}>
                             <div class="prefarance-form playerinfo-form">
 
                                 <div class="row">
@@ -295,7 +263,22 @@ const CreateTeam = (props) => {
                                         <div class="col-md-12">
                                             <div class="prefarance-form-list">
                                                 <label>Language</label>
-                                                <input type="text" class="input-select" onChange={(e) => setLanguage(e.target.value)} />
+                                                <select class="input-select" onChange={(e) => setLanguage(e.target.value)}>
+                                                    <option>Select Language</option>
+                                                    <option>ENGLISH</option>
+                                                    <option>HINDI</option>
+                                                    <option>BENGALI</option>
+                                                    <option>SPANISH</option>
+                                                    <option>ARABIC</option>
+                                                    <option>PORTUGUESE</option>
+                                                    <option>RUSSIAN</option>
+                                                    <option>JAPANESE</option>
+                                                    <option>LAHNDA</option>
+                                                    <option>GERMAN</option>
+                                                    <option>KOREAN</option>
+                                                    <option>FRENCH</option>
+                                                    <option>TELUGU</option>
+                                                </select>
                                                 <label>Team Name</label>
                                                 <input type="text" class="input-select" onChange={(e) => setTeamName(e.target.value)} />
                                                 <label>Player Parent Name</label>
@@ -307,18 +290,25 @@ const CreateTeam = (props) => {
                                                     <option>Badminton</option>
                                                 </select>
                                                 {/* <input type="text" class="input-select" onChange={(e) => setSport(e.target.value)}/> */}
-                                                <label>Time Zone</label>
-                                                <select class="input-select" onChange={(e) => setTimeZone(e.target.value)}>
-                                                    <option>Time Zone1</option>
-                                                    <option>Time Zone2</option>
-                                                    <option>Time Zone3</option>
-                                                </select>
+
                                                 <label>Country</label>
                                                 <select class="input-select" onChange={(e) => setCountry(e.target.value)}>
                                                     <option>India</option>
                                                     <option>America</option>
                                                     <option>South Africa</option>
                                                 </select>
+                                                <div>
+                                                    <GooglePlacesAutocomplete
+                                                        apiKey="AIzaSyB_Ve5EsMrUcHRCZHxkZeSdz24emqo4X6Y"
+                                                    />
+                                                </div>
+                                                <label>Time Zone</label>
+                                                <select class="input-select" onChange={(e) => setTimeZone(e.target.value)}>
+                                                    <option>Time Zone1</option>
+                                                    <option>Time Zone2</option>
+                                                    <option>Time Zone3</option>
+                                                </select>
+
                                                 <label>Zip Code</label>
                                                 <input type="text" class="input-select" onChange={(e) => setZip(e.target.value)} />
 
@@ -342,7 +332,7 @@ const CreateTeam = (props) => {
                                     </div>
                                 </div>
                             </div>
-                            <ToastContainer />
+
                         </div>
                     </div>
                 </div>

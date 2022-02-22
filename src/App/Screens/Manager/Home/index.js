@@ -51,6 +51,7 @@ function ManagerHome(props) {
   const dispatch = useDispatch()
 
   const [userMe, setUser] = useState(null);
+  const [loader, setLoader] = useState(false)
   const [user, setUserData] = useState({});
   const [image, Profile] = useState(BigUserProfile)
   const [picture, setPicture] = useState(teamList)
@@ -86,7 +87,7 @@ function ManagerHome(props) {
   }, []);
 
   const pic = 'https://nodeserver.mydevfactory.com:1447/'
-  const pic1= "https://nodeserver.mydevfactory.com:1447/profilepic/"
+  const pic1 = "https://nodeserver.mydevfactory.com:1447/profilepic/"
 
   const handleLogout = () => {
     console.log("pruyuuuuuu", props);
@@ -132,41 +133,41 @@ function ManagerHome(props) {
         });
     }
   }
-  const uploadImage = async (value) => {
-    const user = JSON.parse(localStorage.getItem('user'));
+  const uploadImage = (value) => {
 
-    if (user) {
 
-      const formData = new FormData();
-      formData.append('profile_image', image);
+    const formData = new FormData();
+    formData.append('profile_image', value);
+    console.log("image--->", value)
 
-      axios('https://nodeserver.mydevfactory.com:1447/api/update-user-profile-image',
+    axios('https://nodeserver.mydevfactory.com:1447/api/update-user-profile-image',
       {
-          method: "POST",
-          headers: {
-              "Content-Type": "multipart/form-data",
-              'x-access-token': user.authtoken
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+          'x-access-token': user.authtoken
 
-          },
-          data: formData
+        },
+        data: formData
       })
       .then((res) => {
         console.log("edit user Image", res)
         if (res.status == 200) {
-            toast.success("Edit Succecfull")
-            console.log("edit Image", res)
+          toast.success("Profile Picture Change  Succecfull")
+          console.log("edit Image", res)
+          updateProfile()
         }
 
         if (res.response_code == 4000) {
-            dispatch(logoutUser(null))
-            localStorage.removeItem("user");
-            history.push("/")
-            toast.error(res.response_message)
+          dispatch(logoutUser(null))
+          localStorage.removeItem("user");
+          history.push("/")
+          toast.error(res.response_message)
         }
-    })
+      })
 
 
-    }
+
   }
   const handleChange = event => {
     console.log("URL.createObjectURL(event.target.files[0])---->", URL.createObjectURL(event.target.files[0]));
@@ -314,7 +315,10 @@ function ManagerHome(props) {
       Network('api/get-user-details', 'GET', header)
         .then(async (res) => {
           console.log("new Profile Pic----", res)
+
           setProfilePic(res.response_data)
+          setLoader(true)
+
 
         })
     }
@@ -388,11 +392,11 @@ function ManagerHome(props) {
                     ACCOUNT
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={{ backgroundColor: "#484848", listStyle: "none", margin: "14px" }}>
-                      <li><a class="dropdown-item" href="#">Jayanta Karmakar</a></li>
-                    <Link to={{ pathname: "/MyAccount"}} >
+                    <li><a class="dropdown-item" href="#">Jayanta Karmakar</a></li>
+                    <Link to={{ pathname: "/MyAccount" }} >
                       <li><a class="dropdown-item" href="#">My Account</a></li>
                     </Link>
-                    <Link to={{ pathname: "/Credit"}} >
+                    <Link to={{ pathname: "/Credit" }} >
                       <li><a class="dropdown-item" href="#">Credits</a></li>
                     </Link>
                     <Link to={{ pathname: "/Household" }} >
@@ -415,7 +419,10 @@ function ManagerHome(props) {
                 </div>
               </div>
               <div class="profile-head">
-                <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div>
+                {loader ?
+                  <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div> :
+                  <div class="profile-head-name">Loading...</div>}
+
                 <div class="profile-head-img">
                   {profilePic.profile_image == null ?
                     <img src={BigUserProfile} alt="" /> :
@@ -438,9 +445,12 @@ function ManagerHome(props) {
                         <img src={`${pic1}${profilePic.profile_image}`} alt="" />
                       }
                     </div>
-                    <div class="team-profile-name">
-                      {profilePic.fname + " " + profilePic.lname}
-                    </div>
+                    {loader ?
+                      <div class="team-profile-name">
+                        {profilePic.fname + " " + profilePic.lname}
+                      </div> :
+                      <div class="team-profile-name">Loading...</div>}
+
                     <div class="update-team-photo">
                       Update Team Photo
                       <input type="file" name='img' onChange={(event) => handleChange(event)} />

@@ -62,6 +62,7 @@ function TeamSchdule(props) {
         // let user = userdata && userdata._id ? true : false;
         // //console.log("userMe===>", user);
         dropdownMenu();
+        setTeamDropDown()
         // setUser(user);
         // //console.log("USerData", userdata);
         const userLocal = JSON.parse(localStorage.getItem("user"));
