@@ -527,7 +527,9 @@ const MyAccount = () => {
                                         <div class="prefarance-form-list">
                                             <label>Birthday</label>
                                             <div class="input-select" >
-                                                <input type="date" class="input-select" onChange={(e) => setBirthday(e.target.value)} style={{ border: "none" }} defaultValue={private1 ? "" : allUserDataList.dob} value={private1 ? "" : birthday}/>
+                                                <input  type="date"  defaultValue class="input-select" onChange={(e) => setBirthday(e.target.value)} style={{ border: "none" }} 
+                                                value={allUserDataList.dob}/>
+                                            
                                             </div>
                                         </div>
                                     </div>

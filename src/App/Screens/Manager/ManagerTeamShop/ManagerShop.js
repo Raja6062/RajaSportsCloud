@@ -33,8 +33,9 @@ function ManagerTeamShop(props) {
   const [userMe, setUser] = useState(null);
   const [user, setUserData] = useState({});
   const [dropdown, setDropdown] = useState([])
-  const [shopData, setShopData] = useState([])
+  
   const [teamDropdown, setTeamDropdown] = useState("")
+  const [shopData, setShopData] = useState([])
   const [modalValue, setModalValue] = useState(false)
   const [image, Profile] = useState("")
   const [name, setName] = useState("")
@@ -66,7 +67,7 @@ function ManagerTeamShop(props) {
     updateProfile()
     dropdownMenu()
     setTeamDropdown()
-    teamShopData(teamDropdown)
+    teamShopData()
 
    
 
@@ -170,8 +171,9 @@ function ManagerTeamShop(props) {
 
   const change = (event) => {
     console.log("event", event.target.value)
-    teamShopData(event.target.value)
     setTeamDropdown(event.target.value)
+    teamShopData(event.target.value)
+   
 
   }
   const addShopData = async () => {
@@ -223,7 +225,7 @@ function ManagerTeamShop(props) {
         })
 
   }
-  console.log("team dropdown",teamDropdown)
+  
 
   const handleChange = event => {
     console.log("URL.createObjectURL(event.target.files[0])---->", URL.createObjectURL(event.target.files[0]));
@@ -277,11 +279,10 @@ function ManagerTeamShop(props) {
   }
 
   const updateModalValue = (id1, uId) => {
-    teamShopData(teamDropdown);
     setModeValue(true)
     setUId(uId)
     setId(id1)
-    console.log("idddddd-------->", id1)
+    console.log("shopdata-------->", shopData)
 
   }
 
@@ -291,16 +292,20 @@ function ManagerTeamShop(props) {
   const updateProduct = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const formData = new FormData();
-    formData.append('team_id', teamDropdown);
-    formData.append('name ', name);
-    formData.append('jersey_number', jursey);
-    formData.append('description ', desciption);
-    formData.append('price', price);
-    formData.append('brand ', brand);
-    formData.append('color', color);
-    formData.append('material ', material);
-    formData.append('size', size);
-    formData.append('image', image);
+    formData.append('image', image ==null ? shopData[id].image :image );
+    formData.append('team_id', teamDropdown==null ? dropdown[0]._id :teamDropdown);
+    formData.append('name', name ==null ? shopData[id].name :name);
+    formData.append('jersey_number', jursey ==null ? shopData[id].jersey_number :jursey);
+    formData.append('description  ', desciption ==null ? shopData[id].description :desciption);
+    formData.append('price', price ==null ? shopData[id].price :price);
+    formData.append('brand  ', brand ==null ? shopData[id].brand :brand);
+    formData.append('color', color ==null ? shopData[id].color : color);
+    formData.append('material ', material ==null ? shopData[id].material : material );
+    formData.append('size', size ==null ? shopData[id].size :size);
+    formData.append('id', uid );
+    console.log("team dropdown",teamDropdown==null?dropdown[0]._id :teamDropdown)
+    console.log("name--->",shopData[id].name)
+    console.log("brand--->",brand)
     const requestOptions = {
       method:"POST",
         headers: {
@@ -531,7 +536,8 @@ function ManagerTeamShop(props) {
                     </Modal.Body>
 
                   </Modal>
-                  {shopData.length == 0 ?
+                  {
+                  /* {shopData.length == 0 ?
                     <div class="team-shop-list-main">
                       <div class="team-shop-product-box">
                         <div class="team-shop-product-img">
@@ -666,7 +672,7 @@ function ManagerTeamShop(props) {
 
 
 
-                    :
+                    : */
                     shopData.map((data, id) => {
                       return (
                         <div class="team-shop-product-box">
@@ -684,7 +690,7 @@ function ManagerTeamShop(props) {
                             <div class="product-size" style={{ flexDirection: "row" }}>{data.size}
 
                               <img src={Delect} style={{ marginLeft: "70%", marginRight: "10px", background: "orangered" }} onClick={() => deleteShopData(data._id)} />
-                              <img src={pencil} onClick={() => updateModalValue(id, data._id)} />
+                              <img src={pencil} onClick={(e) => updateModalValue(id, data._id)} />
                             </div>
                           </div>
                         </div>
@@ -696,7 +702,7 @@ function ManagerTeamShop(props) {
 
                   }
 
-                  {modeValue ? <Modal show={modeValue} style={{ position: "absolute", top: "206px" }}>
+                  {modeValue && shopData.length !=0 ? <Modal show={modeValue} style={{ position: "absolute", top: "206px" }}>
 
                     <Modal.Body>
                     <div class="prefarance-form playerinfo-form">
@@ -708,40 +714,40 @@ function ManagerTeamShop(props) {
                           <div class="col-md-12">
                             <div class="prefarance-form-list">
                               <h2>Name</h2>
-                              <input type="text" class="input-select" onChange={(e) => setName(e.target.value)} />
+                              <input type="text" class="input-select" onChange={(e) => setName(e.target.value)}  defaultValue={shopData[id].name}/>
 
                             </div>
                           </div>
                           <div class="col-md-12">
                             <div class="prefarance-form-list">
                               <h2>Jursey Number</h2>
-                              <input type="text" class="input-select" onChange={(e) => setJursey(e.target.value)} />
+                              <input type="text" class="input-select" onChange={(e) => setJursey(e.target.value)} defaultValue={shopData[id].jersey_number} />
 
                             </div>
                           </div>
                           <div class="col-md-12">
                             <div class="prefarance-form-list">
                               <h2>Description</h2>
-                              <input type="text" class="input-select" onChange={(e) => setDescription(e.target.value)} />
+                              <input type="text" class="input-select" onChange={(e) => setDescription(e.target.value)} defaultValue={shopData[id].description}/>
                             </div>
                           </div>
                           <div class="col-md-12">
                             <div class="prefarance-form-list">
                               <h2>Price</h2>
-                              <input type="text" class="input-select" onChange={(e) => setPrice(e.target.value)} />
+                              <input type="text" class="input-select" onChange={(e) => setPrice(e.target.value)} defaultValue={shopData[id].price}/>
                             </div>
                           </div>
                           <div class="col-md-12">
                             <div class="prefarance-form-list">
                               <h2>Brand</h2>
-                              <input type="text" class="input-select" onChange={(e) => setBrand(e.target.value)} />
+                              <input type="text" class="input-select" onChange={(e) => setBrand(e.target.value)} defaultValue={shopData[id].brand}/>
                             </div>
                           </div>
                           <div class="col-md-12">
                             <div class="prefarance-form-list">
                               <h2>Color</h2>
-                              <select class="input-select" onChange={(e) => setColor(e.target.value)}>
-                                <option>Select Color</option>
+                              <select class="input-select" onChange={(e) => setColor(e.target.value)} defaultValue={shopData[id].color}>
+                              <option>{shopData[id].color}</option>
                                 <option>RED</option>
                                 <option>BLUE</option>
                                 <option>WHITE</option>
@@ -754,15 +760,15 @@ function ManagerTeamShop(props) {
                           <div class="col-md-12">
                             <div class="prefarance-form-list">
                               <h2>Material</h2>
-                              <input type="text" class="input-select" onChange={(e) => setMaterial(e.target.value)} />
+                              <input type="text" class="input-select" onChange={(e) => setMaterial(e.target.value)} defaultValue={shopData[id].material}/>
                             </div>
                           </div>
                           <div class="col-md-12">
                             <div class="prefarance-form-list">
                               <h2>Size</h2>
 
-                              <select class="input-select" onChange={(e) => setSize(e.target.value)}>
-                                <option>Select Size</option>
+                              <select class="input-select" onChange={(e) => setSize(e.target.value)} defaultValue={shopData[id].size}>
+                               <option>{shopData[id].size}</option>
                                 <option>S</option>
                                 <option>M</option>
                                 <option>L</option>
@@ -792,7 +798,7 @@ function ManagerTeamShop(props) {
                       <button class="add-links" style={{ margin: "10px", backgroundColor: "#1d1b1b" }} onClick={updateProduct} >Update</button>
                     </Modal.Body>
 
-                  </Modal> : ""}
+                  </Modal> :"" }
 
 
 
