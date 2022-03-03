@@ -54,7 +54,7 @@ function PlayerAssignments(props) {
     const [id, setId] = useState("")
     const [team, setTeam] = useState([]);
 
-  
+
 
     useEffect(() => {
         // let user = userdata && userdata._id ? true : false;
@@ -92,7 +92,7 @@ function PlayerAssignments(props) {
             }
             console.log('user', user)
 
-            Network('api/get-assignment-list?assigner_id=' + user._id, 'GET', header)
+            Network('api/get-assignment-list?assigner_id=', 'GET', header)
                 .then(async (res) => {
                     console.log("assignmentData----", res)
                     setAssignment(res.response_data.docs)
@@ -160,15 +160,15 @@ function PlayerAssignments(props) {
 
                     setTeam(res.response_data);
                     // if(res.response_data.length!=0){
-                        AssignmentData(res.response_data[0]._id);
+                    AssignmentData(res.response_data[0]._id);
                     // }
-                   
+
 
                 })
         }
     }
 
-    
+
 
     const change1 = (event) => {
         console.log("event", event.target.value)
@@ -204,7 +204,7 @@ function PlayerAssignments(props) {
                         history.push("/")
                         toast.error(res.response_message)
                     }
-                    //console.log("doc data----->",res.response_data.docs)
+                    console.log("schedule----->",res.response_data.docs)
                     setSchedule(res.response_data.docs)
 
 
@@ -329,13 +329,13 @@ function PlayerAssignments(props) {
 
 
     const save = () => {
-       
+
         addAssignmentData()
         setModalValue(false)
         AssignmentData()
     }
     const update = () => {
-       
+
         updateAssignmentData(uid)
         setModeValue(false)
         AssignmentData()
@@ -366,6 +366,7 @@ function PlayerAssignments(props) {
     }
 
     const updateModalValue = (id, uId) => {
+        console.log("update click")
         setModeValue(true)
         setUId(uId)
         setId(id)
@@ -417,17 +418,17 @@ function PlayerAssignments(props) {
             })
             return
         }
-        
-
-       save()
 
 
-       
+        save()
 
 
-    
+
+
+
+
     }
-  
+
     const CheckValidatiionUpdate = () => {
 
         if (time == null) {
@@ -471,12 +472,12 @@ function PlayerAssignments(props) {
             })
             return
         }
-        
 
 
-  update()
 
-       
+        update()
+
+
 
 
     }
@@ -494,7 +495,7 @@ function PlayerAssignments(props) {
                     <div class="dashboard-main-content">
                         <div class="dashboard-head">
                             <div class="teams-select">
-                            <select onClick={change1}>
+                                <select onClick={change1}>
                                     <option>Select Team</option>
                                     {team.map((team) => {
                                         return (
@@ -591,11 +592,11 @@ function PlayerAssignments(props) {
                                     <h2 style={{ color: "#524646", padding: "10px" }}>Volenteer</h2>
                                     <select onClick={volenteerId} style={{ width: "80%", height: "46px", borderRadius: "10px", backgroundColor: "white" }}>
                                         <option>Select Volenteer</option>
-                                        {volenteerData.map((volenteerData) => {
+                                        {volenteerData.member_id != null ? volenteerData.map((volenteerData) => {
                                             return (
                                                 <option value={`${volenteerData.member_id.fname}${volenteerData.member_id.lname}`}>{volenteerData.member_id.fname}{volenteerData.member_id.lname}</option>
                                             )
-                                        })}
+                                        }) : ""}
 
                                     </select>
 
@@ -607,10 +608,10 @@ function PlayerAssignments(props) {
                             </Modal>
 
 
-                            {modeValue ? <Modal show={modeValue} style={{ position: "absolute", top: "206px" }}>
+                            {modeValue && assignment.length != 0 ? <Modal show={modeValue} style={{ position: "absolute", top: "206px" }}>
 
                                 <Modal.Body>
-                                    <h1 style={{ color: "red", paddingBottom: "20px", fontWeight: "bold" }}>Add Assignments</h1>
+                                    <h1 style={{ color: "red", paddingBottom: "20px", fontWeight: "bold" }}>Update Assignments</h1>
                                     <h2 style={{ color: "#524646", padding: "10px" }}>SELECT TEAM</h2>
 
 
@@ -618,9 +619,9 @@ function PlayerAssignments(props) {
 
                                         <option>Select a Team</option>
 
-                                        {dropdown.map((dropdown) => {
+                                        {team.map((team) => {
                                             return (
-                                                <option value={dropdown._id}>{dropdown.team_name}</option>
+                                                <option value={team.team_id._id}>{team.team_id.team_name}</option>
                                             )
                                         })}
                                     </select>
@@ -639,17 +640,16 @@ function PlayerAssignments(props) {
                                     </select>
 
                                     <h2 style={{ color: "#524646", padding: "10px" }}>Date</h2>
-                                    <div class="input-select" style={{ width: "27%" }}>
-                                        <DatePicker selected={startDate} defaultValue={assignment[id].date} show="false" onChange={(date) => setStartDate(date)} className="abc" />
-                                    </div>
+                                  
+                                        <input  defaultValue={assignment[id].date}  onChange={(e) => setStartDate(e.target.value)} style={{ width: "80%", height: "52px", borderRadius: "10px" }} />
+                                
                                     <h2 style={{ color: "#524646", padding: "10px" }}>Time</h2>
-                                    <div class="input-select" style={{ width: "80%", marginLeft: "11%", borderRadius: "10px", border: "1px solid black" }}>
-                                        <TimePicker
-                                            onChange={setTime}
-                                            value={assignment[id].time}
-                                            className="bcd"
-                                        />
-                                    </div>
+                                  
+                                       
+                                        <input type="time"  onChange={(e)=>setTime(e.target.value)} style={{ width: "80%", height: "52px", borderRadius: "10px" }}
+                                            defaultValue={assignment[id].time}
+                                           />
+                                    
                                     <h2 style={{ color: "#524646", padding: "10px" }}>Location</h2>
                                     <select onClick={selectLocation} style={{ width: "80%", height: "46px", borderRadius: "10px", backgroundColor: "white" }}>
                                         <option  > {assignment[id].location}</option>
@@ -668,11 +668,11 @@ function PlayerAssignments(props) {
                                     <h2 style={{ color: "#524646", padding: "10px" }}>Volenteer</h2>
                                     <select onClick={volenteerId} style={{ width: "80%", height: "46px", borderRadius: "10px", backgroundColor: "white" }}>
                                         <option>{assignment[id].volunteer}</option>
-                                        {volenteerData.map((volenteerData) => {
+                                        {volenteerData.member_id != null ? volenteerData.map((volenteerData) => {
                                             return (
                                                 <option value={`${volenteerData.member_id.fname}${volenteerData.member_id.lname}`}>{volenteerData.member_id.fname}{volenteerData.member_id.lname}</option>
                                             )
-                                        })}
+                                        }) : ""}
 
                                     </select>
 
@@ -707,7 +707,7 @@ function PlayerAssignments(props) {
                                                         <div class="game-name">
                                                             {assignment.eventGameDetails.name}</div>
                                                     </td>
-                                                    <td><span>{assignment.date}</span></td>
+                                                    <td><span>{new Date(assignment.date).getDate()}/{new Date(assignment.date).getMonth()}/{new Date(assignment.date).getFullYear()}</span></td>
                                                     <td>
                                                         <span>{assignment.time}</span>
                                                     </td>
@@ -715,9 +715,7 @@ function PlayerAssignments(props) {
                                                         <span>{assignment.location}</span>
                                                     </td>
                                                     <td>{assignment.assignment}
-                                                        {/* <div class="add-btn">
-                                                <button><img src={add} alt="" /></button>
-                                            </div> */}
+                                                        
                                                     </td>
                                                     <td>
                                                         <div class="last-row">

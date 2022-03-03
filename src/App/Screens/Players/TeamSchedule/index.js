@@ -22,6 +22,8 @@ import { Network } from '../../../Services/Api';
 import { useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import { logoutUser } from "../../../Redux/Actions/auth";
+import BigUserProfile from "../../../images/big-user-profile.png"
+import Modal from "react-bootstrap/Modal";
 
 
 function PlayerSchedule(props) {
@@ -32,6 +34,25 @@ function PlayerSchedule(props) {
     const [user, setUserData] = useState({});
     const [schedule,setSchedule] =useState([])
     const [team,setTeam] =useState([])
+    const [profilePic, setProfilePic] = useState([])
+    const [teamDropdown, setTeamDropDown] = useState("")
+    const [dropdown, setDropdown] = useState([])
+
+    const [valueDropDown, setValueDropDown] = useState("")
+    const [eventType, setEventType] = useState()
+    const [modeValue, setModeValue] = useState(false)
+    const [uid, setUId] = useState("")
+    const [id, setId] = useState("")
+    const [nameUpdate, setNameUpdate] = useState('')
+    const [dateUpdate, setDateUpdate] = useState('')
+    const [timeUpdate, setTimeUpdate] = useState('')
+    const [locationDetails, setLocationDetails] = useState('')
+    const [assignmentUpdate, setAssignmentupdate] = useState('')
+    const [volenteerUpdate, setVolenteerUpdate] = useState('')
+    const [flag, setFlagList] = useState([])
+    const [flagId, setFlagId] = useState("")
+
+    const pic = "https://nodeserver.mydevfactory.com:1447/profilepic/"
 
     useEffect(() => {
         // let user = userdata && userdata._id ? true : false;
@@ -45,6 +66,7 @@ function PlayerSchedule(props) {
         setUserData(userLocal);
         teamSelect()
         teamSchedule()
+        updateProfile()
     }, []);
 
     const handleLogout = () => {
@@ -54,6 +76,25 @@ function PlayerSchedule(props) {
         setUserData(null);
         props.history.push("/")
     };
+
+    const updateProfile = () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            let header = {
+                'authToken': user.authtoken
+
+            }
+            console.log('user', user)
+
+            Network('api/get-user-details?user_id=' + user._id, 'GET', header)
+                .then(async (res) => {
+                    console.log("new Profile Pic----", res)
+                    setProfilePic(res.response_data)
+
+                })
+        }
+
+    }
 
 
     const teamSelect = () => {
@@ -115,9 +156,131 @@ function PlayerSchedule(props) {
     }
     const change = (event) => {
         console.log("event", event.target.value)
-       
+        setTeamDropDown(event.target.value)
         teamSchedule(event.target.value);
     }
+    const flagList = () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            let header = {
+                'authToken': user.authtoken
+
+            }
+            //console.log('user',user)
+
+            Network('api/all-flag-list', 'GET', header)
+                .then(async (res) => {
+                    console.log("flagList----", res)
+                    setFlagList(res.response_data)
+                    if (res.response_code == 4000) {
+                        dispatch(logoutUser(null))
+                        localStorage.removeItem("user");
+                        history.push("/")
+                        toast.error(res.response_message)
+                    }
+
+
+
+                })
+        }
+    }
+
+
+    const deleteScheduleData = (id) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        console.log("id-------------->", id)
+        const a = window.confirm('Are you sure you wish to delete this Data?')
+        console.log("delete click")
+        if (a == true) {
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': user.authtoken
+                },
+                body: JSON.stringify({
+                    "id": id
+                })
+            };
+            fetch('https://nodeserver.mydevfactory.com:1447/api/delete-game-event', requestOptions)
+                .then(response => response.json())
+                .then((res) => {
+                    console.log("delete Schedule  data", res)
+                    if (res.response_code == 2000) {
+                        console.log("deleted data", res)
+                    }
+                    if (res.response_code == 4000) {
+                        dispatch(logoutUser(null))
+                        localStorage.removeItem("user");
+                        history.push("/")
+                        toast.error(res.response_message)
+                    }
+
+
+                    teamSchedule(teamDropdown)
+
+                })
+        }
+
+    }
+
+
+    const updateModalValue = (id1, uId) => {
+        teamSchedule(teamDropdown==null?dropdown[0]._id :teamDropdown);
+        setModeValue(true)
+        setUId(uId)
+        setId(id1)
+        console.log("idddddd-------->", id1)
+
+    }
+    console.log("idddddd-------->22", id)
+
+
+    const updateGameEvent = () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': user.authtoken
+            },
+            body: JSON.stringify({
+                "name": nameUpdate,
+                "short_label": schedule[id].short_label,
+                "_id": schedule[id]._id,
+                "opponent": schedule[id].opponent,
+                "event_type": schedule[id].event_type,
+                "date": dateUpdate,
+                "time": timeUpdate,
+                "location": locationDetails,
+                "location_details": locationDetails,
+                "home_or_away": schedule[id].home_or_away,
+                "uniform": schedule[id].uniform,
+            })
+        };
+        fetch('https://nodeserver.mydevfactory.com:1447/api/edit-game-event', requestOptions)
+            .then(response => response.json())
+            .then((res) => {
+                console.log("update game/event data", res)
+                if (res.response_code == 2000) {
+                    toast.success("Edit Game/Event data succesful")
+                }
+
+                if (res.response_code == 4000) {
+                    dispatch(logoutUser(null))
+                    localStorage.removeItem("user");
+                    history.push("/")
+                    toast.error(res.response_message)
+                }
+            })
+
+    }
+
+
+    const selectFlag = (event) => {
+        setFlagId(event.target.value)
+    }
+
 
 
     return (
@@ -141,22 +304,17 @@ function PlayerSchedule(props) {
                             </div>
 
                             <div class="profile-head">
-                                <div class="profile-head-name">{user ? user.fname : null}</div>
+                                <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div>
                                 <div class="profile-head-img">
-                                    {
-                                        user ?
-                                            <img src={user.profile_image} alt="" /> :
-                                            <img src={UserProfile} alt="" />
+                                    {profilePic.profile_image == null ?
+                                        <img src={BigUserProfile} alt="" /> :
+                                        <img src={`${pic}${profilePic.profile_image}`} alt="" />
                                     }
 
                                 </div>
                             </div>
-                            <div class="login-account">
-                                <ul>
-                                    <li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li>
-                                    {/* <li><a href="#" data-toggle="modal" data-target="#myModalregister" onClick={handleLogout}>Logout</a></li> */}
-                                </ul>
-                            </div>
+                            <div class="login-account"><ul><li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li></ul></div>
+
                         </div>
 
                         <div class="prefarance-page">
@@ -167,7 +325,7 @@ function PlayerSchedule(props) {
                                         <ul>
                                             <li><a class="active" href="#">List View</a></li>
                                             <li onClick={()=>{
-                                                history.push("/ViewCalender")
+                                                history.push("./ViewCalender")
                                             }}><a href="#">Calendar View</a></li>
 
                                         </ul>
@@ -190,43 +348,121 @@ function PlayerSchedule(props) {
                                             <th>Assignments</th>
                                             <th>Volunteer</th>
                                         </tr>
-                                        {schedule.map((schedule)=>{
-                                            return(
+                                        {schedule.map((schedule, id) => {
+                                            return (
                                                 <tr>
 
-                                            <td>
-                                                <div class="flag-prac">
-                                                <img src={schedule.display_icon.image} alt=""  style={{height:"50px",width:"50px",borderRadius:"50%"}}/>
-                                                <button class="practice">{schedule.name}</button>
-                                                    
-                                                </div>
-                                        
-                                            </td>
-                                            <td><span>{schedule.date}</span></td>
-                                            <td>
-                                                <span>{schedule.time.startTime}-{schedule.time.endTime}</span>
-                                            </td>
-                                            <td>
-                                                <span>{schedule.location_details},{schedule.location}</span>
-                                            </td>
-                                            <td>{schedule.assignment}
-                                    
-                                            </td>
-                                            <td>
-                                                <div class="last-row">
-                                                    <p>Avaneesh Shett</p> <button data-toggle="modal" data-target="#assignmentdelect" ><img src={Delect} />
-                                                    </button> <button><img src={pencil} /></button>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                    <td>
+                                                        <div class="flag-prac">
+                                                            <img src={schedule.display_icon.image} alt="" style={{ height: "50px", width: "50px", borderRadius: "50%" }} />
+                                                            <button class="practice">{schedule.name}</button>
+
+                                                        </div>
+
+                                                    </td>
+                                                    <td><span>{`${new Date(schedule.date).getDate()}/${new Date(schedule.date).getMonth()}/${new Date(schedule.date).getFullYear()}`}</span></td>
+                                                    <td>
+                                                        <span>{schedule.time.startTime}-{schedule.time.endTime}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span>{schedule.location_details},{schedule.location}</span>
+                                                    </td>
+                                                    <td>{schedule.assignment}
+
+                                                    </td>
+                                                    <td>
+                                                        <div class="last-row">
+                                                            <p>Avaneesh Shett</p> <button data-toggle="modal" data-target="#assignmentdelect" onClick={() => deleteScheduleData(schedule._id)}><img src={Delect} />
+                                                            </button> <button onClick={() => updateModalValue(id, schedule._id)}><img src={pencil} /></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
                                             )
 
                                         })}
 
-                                        
+
+
 
 
                                     </table>
+
+                                    {modeValue && schedule.length !=0 ? <Modal show={modeValue} style={{ position: "absolute", top: "206px" }}>
+
+                                        <Modal.Body>
+                                            <div class="prefarance-form playerinfo-form">
+                                                <h1 style={{ color: "red", paddingBottom: "20px", fontWeight: "bold" }}>Edit Game/Event</h1>
+                                                <div class="row">
+
+
+                                                    <div class="col-md-12">
+                                                        <div class="prefarance-form-list">
+                                                            <h2> Name of Event/Game</h2>
+                                                            <input type="text" class="input-select" placeholder="Enter Name of Game/Event "
+                                                                defaultValue={schedule[id].name} onChange={(e) => setNameUpdate(e.target.value)} />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="prefarance-form-list">
+                                                            <h2> date</h2>
+                                                            <input type="date" class="input-select" placeholder="Select Date "
+                                                                defaultValue={`${new Date(schedule[id].date).getDate()}/${new Date(schedule[id].date).getMonth()}/${new Date(schedule[id].date).getFullYear()}`} onChange={(e) => setDateUpdate(e.target.value)} />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="prefarance-form-list">
+                                                            <h2> Time</h2>
+                                                            <input type="time" class="input-select" placeholder="Select Time "
+                                                                defaultValue={`${schedule[id].time.startTime}-${schedule[id].time.endTime}`} onChange={(e) => setTimeUpdate(e.target.value)} />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="prefarance-form-list">
+                                                            <h2> Location</h2>
+                                                            <input type="text" class="input-select" placeholder="Enter Location"
+                                                                defaultValue={`${schedule[id].location_details},${schedule[id].location}`} onChange={(e) => setLocationDetails(e.target.value)} />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="prefarance-form-list">
+                                                            <h2> Assignment</h2>
+                                                            <input type="text" class="input-select" placeholder="Enter Assingment "
+                                                                defaultValue={schedule[id].assignment} onChange={(e) => setAssignmentupdate(e.target.value)} />
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="prefarance-form-list">
+                                                            <h2> Name of Volenteer</h2>
+                                                            <input type="text" class="input-select" placeholder="Enter Name Of Volenteer "
+                                                                defaultValue="Avaneesh Shett" onChange={(e) => setVolenteerUpdate(e.target.value)} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="prefarance-form-list">
+                                                    <div style={{ display: "flex" }}>
+                                                        {flag.map((flag) => {
+                                                            return (
+
+                                                                <div style={{ margin: "10px" }}><img src={`${pic}${flag.image}`} alt="" style={{ height: "30px", width: "30px" }} /><br></br>
+                                                                    <input type="radio" name="radio" style={{ height: "30px", margin: "5px" }} onClick={selectFlag} value={flag._id} /></div>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <button class="add-links" style={{ margin: "10px" }} onClick={() => setModeValue(false)}>Cancel</button>
+                                            <button class="add-links" style={{ margin: "10px", backgroundColor: "#1d1b1b" }} onClick={updateGameEvent}>Update</button>
+                                        </Modal.Body>
+
+                                    </Modal> : ""}
+
                                 </div>
                             </div>
                         </div>

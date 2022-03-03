@@ -548,7 +548,7 @@ function ManagerHome(props) {
                   <h2>Team</h2>
                   <a href="#">View All</a>
                 </div>
-                <div class="team-list-section">
+                <div class="team-list-section" style={{height:"544px",overflowX:"auto"}}>
                   {team.map((team) => {
                     return (
                       <div class="team-list-box">
@@ -608,7 +608,7 @@ function ManagerHome(props) {
                   {/* <img src={piechat} alt="" /> */}
                   <div style={{ display: 'flex', flexDirection: "row" }}>
                     <h2 style={{ color: "white" }}>Total Income</h2>
-                    <div style={{ marginLeft: "100px" }}>
+                    <div style={{ marginLeft: "20px" }}>
                       <select style={{ backgroundColor: "#484848", padding: "10px", marginRight: "10px", borderRadius: "10px" }}>
                         <option> Monthly</option>
                       </select>
@@ -669,7 +669,7 @@ function ManagerHome(props) {
                 <div class="dashboard-schedule-main-box">
                   <div class="dashboard-schedule-main-box-option">
                     <label class="options-radio">Game
-                      <input type="radio" checked="checked" name="radio" />
+                      <input type="radio"  name="radio" />
                       <span class="checkmark"></span>
                     </label>
 

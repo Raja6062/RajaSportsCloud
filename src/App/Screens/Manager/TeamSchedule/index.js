@@ -251,7 +251,7 @@ function TeamSchdule(props) {
 
 
     const updateModalValue = (id1, uId) => {
-        teamSchedule(teamDropdown);
+        teamSchedule(teamDropdown==null?dropdown[0]._id :teamDropdown);
         setModeValue(true)
         setUId(uId)
         setId(id1)
@@ -511,7 +511,7 @@ function TeamSchdule(props) {
 
                                     </table>
 
-                                    {modeValue ? <Modal show={modeValue} style={{ position: "absolute", top: "206px" }}>
+                                    {modeValue && schedule.length !=0 ? <Modal show={modeValue} style={{ position: "absolute", top: "206px" }}>
 
                                         <Modal.Body>
                                             <div class="prefarance-form playerinfo-form">

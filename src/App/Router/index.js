@@ -87,6 +87,7 @@ import Photos from "../Screens/Manager/TeamMedia/Photos";
 import Videos from "../Screens/Manager/TeamMedia/Videos";
 import Files from "../Screens/Manager/TeamMedia/Files";
 import TeamScorekeeper from '../Screens/Manager/TeamScoreKeeper/TeamScoreKeeper';
+import ProductDetails from '../Screens/Manager/ManagerTeamShop/ProductDetails'
 
 
 import NotFound from "./../../Error"
@@ -213,6 +214,7 @@ function RouterScreen() {
                                         <Route path='/Photos' component={Photos} />
                                         <Route path='/Videos' component={Videos} />
                                         <Route path='/Files' component={Files} />
+                                        <Route path='/ProductDetails' component={ProductDetails} />
                                         
                                         
 

@@ -27,6 +27,7 @@ import { useDispatch } from 'react-redux';
 import { Network } from '../../../Services/Api';
 import { ToastContainer, toast } from 'react-toastify';
 import { CalendarComponent } from '@syncfusion/ej2-react-calendars';
+import axios from 'axios'
 import "../../../../../node_modules/@syncfusion/ej2-base/styles/material.css";
 import "../../../../../node_modules/@syncfusion/ej2-buttons/styles/material.css";
 import "../../../../../node_modules/@syncfusion/ej2-inputs/styles/material.css";
@@ -44,11 +45,14 @@ function HomeComponents(props) {
   const [team, setTeam] = useState([]);
   const [degree, setDegree] = useState([])
   const [newplayerdata, setNewPlayerData] = useState([])
+  const [image, Profile] = useState(BigUserProfile)
 
   // const [loading,setLoading]= useState(false)
   const [profilePic, setProfilePic] = useState([])
   console.log("team ka value====>", team);
   console.log(" typeof team====>", typeof (team));
+
+  const pic1 = "https://nodeserver.mydevfactory.com:1447/profilepic/"
 
 
   useEffect(() => {
@@ -130,6 +134,13 @@ function HomeComponents(props) {
         })
     }
   }
+
+  const handleChange = event => {
+    console.log("URL.createObjectURL(event.target.files[0])---->", URL.createObjectURL(event.target.files[0]));
+    Profile(event.target.files[0])
+    uploadImage(event.target.files[0])
+
+  };
   const updateProfile = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
@@ -152,6 +163,43 @@ function HomeComponents(props) {
 
         })
     }
+
+  }
+
+  const uploadImage = (value) => {
+
+
+    const formData = new FormData();
+    formData.append('profile_image', value);
+    console.log("image--->", value)
+
+    axios('https://nodeserver.mydevfactory.com:1447/api/update-user-profile-image',
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+          'x-access-token': user.authtoken
+
+        },
+        data: formData
+      })
+      .then((res) => {
+        console.log("edit user Image", res)
+        if (res.status == 200) {
+          toast.success("Profile Picture Change  Succecfull")
+          console.log("edit Image", res)
+          updateProfile()
+        }
+
+        if (res.response_code == 4000) {
+          dispatch(logoutUser(null))
+          localStorage.removeItem("user");
+          history.push("/")
+          toast.error(res.response_message)
+        }
+      })
+
+
 
   }
 
@@ -201,11 +249,16 @@ function HomeComponents(props) {
               </div>
               --> */}
               <div class="profile-head">
-                <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div>
+                {profilePic.fname ?
+                  <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div> :
+                  <div class="profile-head-name">Loading...</div>
+
+                }
+
                 <div class="profile-head-img">
                   {profilePic.profile_image == null ?
                     <img src={BigUserProfile} alt="" /> :
-                    <img src={`${pic}${profilePic.profile_image}`} alt="" />
+                    <img src={`${pic1}${profilePic.profile_image}`} alt="" />
                   }
 
                 </div>
@@ -224,15 +277,23 @@ function HomeComponents(props) {
                     <div class="team-profile-img">
                       {profilePic.profile_image == null ?
                         <img src={BigUserProfile} alt="" /> :
-                        <img src={`${pic}${profilePic.profile_image}`} alt="" />
+                        <img src={`${pic1}${profilePic.profile_image}`} alt="" />
                       }
                     </div>
-                    <div class="team-profile-name">
-                      {profilePic.fname + " " + profilePic.lname}
-                    </div>
+                    {
+                      profilePic.fname ?
+                        <div class="team-profile-name">
+                          {profilePic.fname + " " + profilePic.lname}
+                        </div> :
+                        <div class="team-profile-name">
+                          Loading...
+                        </div>
+
+                    }
+
                     <div class="update-team-photo">
                       Update Player Photo
-                      <input type="file" />
+                      <input type="file" onChange={(event) => handleChange(event)} />
                     </div>
                   </div>
 
@@ -332,7 +393,7 @@ function HomeComponents(props) {
                             {
                               player.member_id.profile_image == null ?
                                 <img src={teamList} alt="" /> :
-                                <img src={`${pic}${player.member_id.profile_image}`} alt="" />
+                                <img src={`${pic1}${player.member_id.profile_image}`} alt="" />
                             }
                           </div>
                           <div class="team-list-box-text">
@@ -451,7 +512,7 @@ function HomeComponents(props) {
                 <div class="dashboard-schedule-main-box">
                   <div class="dashboard-schedule-main-box-option">
                     <label class="options-radio">Game
-                      <input type="radio" checked="checked" name="radio" />
+                      <input type="radio" name="radio" />
                       <span class="checkmark"></span>
                     </label>
 

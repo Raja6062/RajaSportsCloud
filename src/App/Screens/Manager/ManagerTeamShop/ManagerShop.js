@@ -677,8 +677,11 @@ function ManagerTeamShop(props) {
                       return (
                         <div class="team-shop-product-box">
                           <div class="team-shop-product-img">
-                            {data.image == null ? <img src={listImage} alt="" /> :
+                          <Link to={{ pathname: "/ProductDetails", state: data }} >
+                          {data.image == null ? <img src={listImage} alt="" /> :
                               <img src={`${pic}${data.image}`} alt="" style={{height:"100%",width:"100%"}} />}
+                      </Link>
+                           
 
                           </div>
                           <div class="team-shop-product-text">

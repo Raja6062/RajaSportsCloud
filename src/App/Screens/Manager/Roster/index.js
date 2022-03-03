@@ -79,6 +79,7 @@ function ManagerRoster(props) {
 
 
 
+
     // const [Nonplayer,setNonPlayer]= useState([]);
 
     useEffect(() => {
@@ -445,6 +446,7 @@ function ManagerRoster(props) {
                                 </div>
                             </div>
                             <div class="login-account"><ul><li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li></ul></div>
+                            
 
                         </div>
 
@@ -880,6 +882,7 @@ function ManagerRoster(props) {
                                     </Modal.Body>
 
                                 </Modal> : ""}
+                                
 
                             </div>
 
@@ -969,11 +972,20 @@ function ManagerRoster(props) {
 
 
                                     </table>
+                                  
                                 </div>
                             </div>
+          
 
                         </div>
+
+                       
+
+
+
+
                         <Footer />
+
                     </div>
                 </div>
             </div>

@@ -27,7 +27,7 @@ import { Network } from '../../../Services/Api';
 import { useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import { logoutUser } from "../../../Redux/Actions/auth";
-
+import BigUserProfile from "../../../images/big-user-profile.png"
 
 const TeamAvailability = () => {
 
@@ -38,6 +38,9 @@ const TeamAvailability = () => {
     const [schedule,setSchedule] =useState([])
     const [team,setTeam] =useState([])
     const [divColor,setDivColor]=useState(false)
+    const [profilePic, setProfilePic] = useState([])
+
+    const pic = "https://nodeserver.mydevfactory.com:1447/profilepic/"
 
 
 
@@ -51,6 +54,7 @@ const TeamAvailability = () => {
         setUserData(userLocal);
         teamSelect()
         teamSchedule()
+        updateProfile()
 
         
     }, []);
@@ -61,6 +65,25 @@ const TeamAvailability = () => {
         setUserData(null);
         history.push("/")
     };
+
+    const updateProfile = () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            let header = {
+                'authToken': user.authtoken
+
+            }
+            console.log('user', user)
+
+            Network('api/get-user-details?user_id=' + user._id, 'GET', header)
+                .then(async (res) => {
+                    console.log("new Profile Pic----", res)
+                    setProfilePic(res.response_data)
+
+                })
+        }
+
+    }
 
 
 
@@ -146,22 +169,17 @@ const TeamAvailability = () => {
                             </div>
 
                             <div class="profile-head">
-                                <div class="profile-head-name">{user ? user.fname : null}</div>
+                                <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div>
                                 <div class="profile-head-img">
-                                    {
-                                        user ?
-                                            <img src={user.profile_image} alt="" /> :
-                                            <img src={UserProfile} alt="" />
+                                    {profilePic.profile_image == null ?
+                                        <img src={BigUserProfile} alt="" /> :
+                                        <img src={`${pic}${profilePic.profile_image}`} alt="" />
                                     }
 
                                 </div>
                             </div>
-                            <div class="login-account">
-                                <ul>
-                                    <li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li>
-                                    {/* <li><a href="#" data-toggle="modal" data-target="#myModalregister" onClick={handleLogout}>Logout</a></li> */}
-                                </ul>
-                            </div>
+                            <div class="login-account"><ul><li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li></ul></div>
+
                         </div>
                         <div>
                             <h1 style={{color:"white",fontSize:"30px",fontWeight:"bold"}}>Availability for</h1>
@@ -198,7 +216,7 @@ const TeamAvailability = () => {
                                                 </div>
                                         
                                             </td>
-                                            <td><span>{schedule.date}</span></td>
+                                            <td><span>{new Date(schedule.date).getDate()}/{new Date(schedule.date).getMonth()}/{new Date(schedule.date).getFullYear()}</span></td>
                                             <td>
                                                 <span>{schedule.time.startTime}-{schedule.time.endTime}</span>
                                             </td>
@@ -206,7 +224,7 @@ const TeamAvailability = () => {
                                                 <span>{schedule.location_details},{schedule.location}</span>
                                             </td>
                                         <td>
-                                            <div  style={{ height:"20px",width:"20px",marginLeft:"30px",backgroundColor:divColor?"green":"white"}} onClick={()=>setDivColor(!divColor)}></div>
+                                        <input type="checkbox" style={{ width: "20px", height: "20px" }}/>
                                         </td>
                                         
                                     </tr>

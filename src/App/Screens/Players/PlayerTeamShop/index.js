@@ -19,6 +19,7 @@ import Footer from "../../../Components/Footer"
 import { useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import { logoutUser } from "../../../Redux/Actions/auth";
+import BigUserProfile from "../../../images/big-user-profile.png"
 
 
 function PlayerTeamShop(props) {
@@ -29,6 +30,7 @@ function PlayerTeamShop(props) {
   const [user, setUserData] = useState({});
   const [shopData, setShopData] = useState([])
   const [team,setTeam]=useState([]);
+  const [profilePic, setProfilePic] = useState([])
 
   useEffect(() => {
     // let user = userdata && userdata._id ? true : false;
@@ -42,6 +44,7 @@ function PlayerTeamShop(props) {
     setUserData(userLocal);
     teamSelect()
     teamShopData()
+    updateProfile()
   }, []);
 
   const handleLogout = () => {
@@ -52,6 +55,33 @@ function PlayerTeamShop(props) {
     props.history.push("/")
   };
   const pic = 'https://nodeserver.mydevfactory.com:1447/'
+
+  const pic1 = "https://nodeserver.mydevfactory.com:1447/profilepic/"
+
+  const updateProfile = () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      let header = {
+        'authToken': user.authtoken
+
+      }
+      console.log('user', user)
+
+      Network('api/get-user-details?user_id=' + user._id, 'GET', header)
+        .then(async (res) => {
+          console.log("new Profile Pic----", res)
+          if (res.response_code == 4000) {
+            dispatch(logoutUser(null))
+            localStorage.removeItem("user");
+            history.push("/")
+            toast.error(res.response_message)
+          }
+          setProfilePic(res.response_data)
+
+        })
+    }
+
+  }
 
   const teamSelect=()=>{
     const user = JSON.parse(localStorage.getItem('user'));
@@ -138,12 +168,16 @@ function PlayerTeamShop(props) {
               </div>
 
               <div class="profile-head">
-                <div class="profile-head-name">{user ? user.fname : null}</div>
+                {profilePic.fname ?
+                  <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div> :
+                  <div class="profile-head-name">Loading...</div>
+
+                }
+
                 <div class="profile-head-img">
-                  {
-                    user ?
-                      <img src={user.profile_image} alt="" /> :
-                      <img src={UserProfile} alt="" />
+                  {profilePic.profile_image == null ?
+                    <img src={BigUserProfile} alt="" /> :
+                    <img src={`${pic1}${profilePic.profile_image}`} alt="" />
                   }
 
                 </div>
