@@ -25,12 +25,15 @@ import { useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import { logoutUser } from "../../../Redux/Actions/auth";
 import UserProfile from "../../../images/user-profile.png"
+import BigUserProfile from "../../../images/big-user-profile.png"
+
 
 
 
 
 const NewEvent = () => {
 
+    const pic1 = "https://nodeserver.mydevfactory.com:1447/profilepic/"
 
     const history = useHistory();
     const dispatch = useDispatch()
@@ -46,22 +49,47 @@ const NewEvent = () => {
     const [oponent, setOponent] = useState()
     const [location, setLocation] = useState()
     const [locationDetails, setLocationDetails] = useState()
-    const [startTime, setStartTime] = useState()
-    const [endTime, setEndTime] = useState()
-    const [arrivalTime, setArrivalTime] = useState()
+    const [startTime, setStartTime] = useState("")
+    const [endTime, setEndTime] = useState("")
+    const [arrivalTime, setArrivalTime] = useState("")
     const [note, setNote] = useState()
     const [availability, setAvalability] = useState()
     const [assignment, setAssingment] = useState()
     const [uniform, setUniform] = useState()
     const [teamId, setTeamId] = useState()
     const [dropdown, setDropdown] = useState([])
-    const[teamDropdown,setTeamDropDown]=useState('')
+    const [teamDropdown, setTeamDropDown] = useState('')
     const [ownDropdown, setOwnDropDown] = useState("")
     const [opnentDropdown, setOponentDropDown] = useState("")
     const [check, setCheck] = useState("false")
     const [flagId, setFlagId] = useState("")
     const { state } = useLocation()
     const [schedule, setSchedule] = useState([])
+    const [nameError, setNameError] = useState("")
+    const [starDateError, setStartDError] = useState("")
+    const [teamError, setTeamError] = useState("")
+
+    const [OpError, setOponetError] = useState("")
+    const [LError, setLabelError] = useState("")
+    const [stateError, setStateError] = useState("")
+    const [locaDError, setLocationDError] = useState("")
+
+    const [LocError, setLocationError] = useState("")
+    const [uniError, setUniformError] = useState("")
+    const [arrivError, setArrivalTimeError] = useState("")
+    const [noteError, setNoteError] = useState("")
+    const [assignError, setAssingmentError] = useState("")
+    const [flagError, setFlagError] = useState("")
+    const [stiemError, setStartDateError] = useState("")
+    const [etimeError, setEndTimeError] = useState("")
+    const [timeError, setTimeError] = useState("")
+    const[ownError,setOwnError] =useState("")
+    const [loader, setLoader] = useState(false)
+    const [profilePic, setProfilePic] = useState([])
+
+
+
+
 
 
 
@@ -79,8 +107,8 @@ const NewEvent = () => {
         setUser(userD);
         setUserData(userLocal);
         flagList()
-        eventCreate()
         dropdownMenu()
+        updateProfile()
 
 
 
@@ -96,6 +124,25 @@ const NewEvent = () => {
         setUserData(null);
         history.push("/")
     };
+    const updateProfile = () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            let header = {
+                'authToken': user.authtoken
+
+            }
+            console.log('user', user)
+
+            Network('api/get-user-details?user_id=' + user._id, 'GET', header)
+                .then(async (res) => {
+                    console.log("new Profile Pic----", res)
+                    setProfilePic(res.response_data)
+                    setLoader(true)
+
+                })
+        }
+
+    }
 
 
 
@@ -158,53 +205,60 @@ const NewEvent = () => {
 
 
     const eventCreate = () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const eventType = localStorage.getItem("eventType")
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': user.authtoken
-            },
-            body: JSON.stringify({
-                'name': name,
-                'date': startDate,
-                'team_id': ownDropdown,
-                'short_label': lebel,
-                "opponent": opnentDropdown,
-                "manager_id": user._id,
-                "event_type": state,
-                "location_details": locationDetails,
-                "location": location,
-                "uniform": uniform,
-                "arrival_time": arrivalTime,
-                "notes": note,
-                "assignment": assignment,
-                "notify_team": check,
-                "display_icon": flagId,
-                "home_or_away": "HOME",
-                "time": {
-                    "startTime": startTime,
-                    "endTime": endTime
+        if (CheckValidatiion()) {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const eventType = localStorage.getItem("eventType")
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': user.authtoken
                 },
-            })
-        };
-        fetch('https://nodeserver.mydevfactory.com:1447/api/add-game-event', requestOptions)
-            .then(response => response.json())
-            .then((res) => {
-                console.log("event Data", res)
-                console.log("eventType", eventType)
-                if(res.response_code==2000){
-                    console.log("success new game event",res)
-                    history.push("/Teamschdule")
-                }
-                if (res.response_code == 4000) {
-                    dispatch(logoutUser(null))
-                    localStorage.removeItem("user");
-                    history.push("/")
-                    toast.error(res.response_message)
-                }
-            })
+                body: JSON.stringify({
+                    'name': name,
+                    'date': startDate,
+                    'team_id': ownDropdown,
+                    'short_label': lebel,
+                    "opponent": opnentDropdown,
+                    "manager_id": user._id,
+                    "event_type": state,
+                    "location_details": locationDetails,
+                    "location": location,
+                    "uniform": uniform,
+                    "arrival_time": arrivalTime,
+                    "notes": note,
+                    "assignment": assignment,
+                    "notify_team": check,
+                    "display_icon": flagId,
+                    "home_or_away": "HOME",
+                    "time": {
+                        "startTime": startTime,
+                        "endTime": endTime
+                    },
+                })
+            };
+            fetch('https://nodeserver.mydevfactory.com:1447/api/add-game-event', requestOptions)
+                .then(response => response.json())
+                .then((res) => {
+                    console.log("event Data", res)
+                    console.log("eventType", eventType)
+                    if (res.response_code == 2000) {
+                        console.log("success new game event", res)
+                        history.push("/Teamschdule")
+                    }
+                    else{
+                        toast.error(res.response_message)
+
+                    }
+                    if (res.response_code == 4000) {
+                        dispatch(logoutUser(null))
+                        localStorage.removeItem("user");
+                        history.push("/")
+                        toast.error(res.response_message)
+                    }
+                })
+        }
+
 
     }
 
@@ -230,7 +284,7 @@ const NewEvent = () => {
             Network('api/get-game-event-list?manager_id=' + user._id + '&team_id=' + id + '&page=1&limit=10', 'GET', header)
                 .then(async (res) => {
                     console.log("schedule----", res)
-                   
+
                     if (res.response_code == 4000) {
                         dispatch(logoutUser(null))
                         localStorage.removeItem("user");
@@ -268,145 +322,206 @@ const NewEvent = () => {
 
 
     const CheckValidatiion = () => {
-
+        let isValid = true
         if (name == null) {
-            toast.error("Please Provide  Name", {
-                position: "top-center"
-            })
+            isValid = false
+            setNameError("Please Provide  Name")
         }
-        if (startDate == null) {
-            toast.error("Please Provide Starting Time", {
-                position: "top-center"
-            })
+        else {
+            setNameError("")
         }
-        if (teamDropdown == null) {
-            toast.error("Please Select A Team", {
-                position: "top-center"
-            })
-            return
+        if (!startDate) {
+            isValid = false
+            setStartDError("Please Provide Start Date")
         }
+        else {
+            setStartDError("")
+        }
+        if (!time ) {
+            isValid = false
+            setTimeError("Please Provide Time")
+        }
+        else {
+            setTimeError("")
+        }
+        
         if (lebel == null) {
-            toast.error("Please Fill the Label", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setLabelError("Please Fill the Label")
+
         }
-        if (opnentDropdown == null) {
-            toast.error("Please Select Oponent Team", {
-                position: "top-center"
-            })
-            return
+        else {
+            setLabelError("")
+        }
+        if (!ownDropdown) {
+            isValid = false
+            setOwnError("Please Select Oponent Team")
+
+        }
+        else {
+            setOwnError("")
+        }
+        if (!opnentDropdown) {
+            isValid = false
+            setOponetError("Please Select Oponent Team")
+
+        }
+        else {
+            setOponetError("")
         }
         if (state == null) {
-            toast.error("Please Provide State", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setStateError("Please Provide State")
+
+        }
+        else {
+            setStateError("")
         }
         if (locationDetails == null) {
-            toast.error("Please Select Location Details", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setLocationDError("Please Select Location Details")
+
+        }
+        else {
+            setLocationDError("")
         }
         if (location == null) {
-            toast.error("Please Select Location", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setLocationError("Please Select Location")
+
+        }
+        else {
+            setLocationError("")
         }
         if (uniform == null) {
-            toast.error("Please Select Uniform", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setUniformError("Please Select Uniform")
         }
-        if (arrivalTime == null) {
-            toast.error("Please Provide Arrival Time", {
-                position: "top-center"
-            })
-            return
+        else {
+            setUniformError("")
+        }
+        if (!arrivalTime) {
+            isValid = false
+            setArrivalTimeError("Please Provide Arrival Time")
+
+        }
+        else {
+            setArrivalTimeError("")
         }
         if (note == null) {
-            toast.error("Please Provide  Note", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setNoteError("Please Provide  Note")
+
+        }
+        else {
+            setNoteError("")
         }
         if (assignment == null) {
-            toast.error("Please Provide Assignment", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setAssingmentError("Please Provide Assignment")
+
         }
-        if (flagId == null) {
-            toast.error("Please Select Your Flag", {
-                position: "top-center"
-            })
-            return
+        else {
+            setAssingmentError("")
         }
-        if (startTime == null) {
-            toast.error("Please Provide Starting Time", {
-                position: "top-center"
-            })
-            return
+        if (!flagId) {
+            isValid = false
+            setFlagError("Please Select Your Flag")
+
         }
-        if (endTime == null) {
-            toast.error("Please Provide End Time", {
-                position: "top-center"
-            })
-            return
+        else {
+            setFlagError("")
+        }
+        if (!startTime ) {
+            isValid = false
+            setStartDateError("Please Provide Starting Time")
+
+        }
+        else {
+            setStartDateError("")
+        }
+        if (!endTime) {
+            isValid = false
+            setEndTimeError("Please Provide End Time")
+
+        }
+        else {
+            setEndTimeError("")
         }
 
 
-        eventCreate()
-      
+        return isValid
+
 
 
     }
 
+console.log("starDateError",starDateError)
 
     return (
         <div class="prefarance-box player-info" style={{ height: "100%", marginTop: "0px", borderRadius: "0px" }}>
             <SideMenuComponents manger="manger" />
             <div class="dashboard-main-content">
-                <div class="dashboard-head">
+            <div class="dashboard-head">
                     <div class="teams-select">
-                        <button class="create-new-team" onClick={() => history.push("./CreateTeam")}>Create New Teams</button>
+                        <button class="create-new-team" onClick={() => {
+                            history.push("/CreateTeam")
+                        }}>Create New Teams</button>
+                        <select onChange={change} >
 
-                        <select onChange={change} value={teamDropdown == "" ? dropdown[0]?._id : teamDropdown} >
-                            {dropdown.map((dropdown) => {
-                                return (
-                                    <option value={dropdown._id}>{dropdown.team_name}</option>
-                                )
-                            })}
+                            {dropdown == null ? <option> Team1</option> :
+                                dropdown.map((team) => {
+                                    return (
+                                        <option key={team.id}>{team.team_name}</option>
+                                    )
+                                })}
                         </select>
-                        <select onClick={()=>{
-                    history.push("/MyAccount")
-                  }}>
-                  <option >Account</option>
-                  <option>Account 2</option>
-                  <option>Account 3</option>
-                </select>
-                    </div>
+                        <div className="dropBtn">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style={{ backgroundColor: "#2C2C2C", border: "none" }}>
+                                ACCOUNT
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={{ backgroundColor: "#484848", listStyle: "none", margin: "14px" }}>
+                                <li><a class="dropdown-item" href="#">Jayanta Karmakar</a></li>
+                                <Link to={{ pathname: "/MyAccount" }} >
+                                    <li><a class="dropdown-item" href="#">My Account</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Credit" }} >
+                                    <li><a class="dropdown-item" href="#">Credits</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Household" }} >
+                                    <li><a class="dropdown-item" href="#">My HouseHold</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/ManageTeam" }} >
+                                    <li><a class="dropdown-item" href="#">Manage My Team</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Biling" }} >
+                                    <li><a class="dropdown-item" href="#">Biling & Plans</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/CreateTeam" }} >
+                                    <li><a class="dropdown-item" href="#">Create New Team</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/SignOut" }} >
+                                    <li><a class="dropdown-item active" href="#">Sign Out</a></li>
+                                </Link>
 
+                            </ul>
+                        </div>
+                    </div>
                     <div class="profile-head">
-                        <div class="profile-head-name">{user ? user.fname : null}</div>
+                        {loader ?
+                            <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div> :
+                            <div class="profile-head-name">Loading...</div>}
+
                         <div class="profile-head-img">
-                            {
-                                user ?
-                                    <img src={user.profile_image} alt="" /> :
-                                    <img src={UserProfile} alt="" />
+                            {profilePic.profile_image == null ?
+                                <img src={BigUserProfile} alt="" /> :
+                                <img src={`${pic1}${profilePic.profile_image}`} alt="" />
                             }
 
                         </div>
                     </div>
-                    <div class="login-account">
-                        <ul>
-                            <li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li>
-                            {/* <li><a href="#" data-toggle="modal" data-target="#myModalregister" onClick={handleLogout}>Logout</a></li> */}
-                        </ul>
-                    </div>
+                    <div class="login-account"><ul><li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li></ul></div>
+
                 </div>
                 <div class="prefarance-box" style={{ overflow: "auto" }} >
                     <ul class="nav nav-tabs" role="tablist">
@@ -434,7 +549,8 @@ const NewEvent = () => {
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
                                                 <label> Name of {state}</label>
-                                                <input type="text" class="input-select" placeholder="Virtual Practice " onChange={(e) => setName(e.target.value)} />
+                                                <input type="text" class="input-select" onChange={(e) => setName(e.target.value)} />
+                                                <span style={{ color: "red" }}>{nameError}</span>
                                             </div>
                                         </div>
 
@@ -442,30 +558,35 @@ const NewEvent = () => {
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
                                                 <label>Short Lebel</label>
-                                                <input type="text" class="input-select" placeholder="e.g ,Practice,BBQ,Meeting,etc" onChange={(e) => setLebel(e.target.value)} />
-                                                <p style={{ color: "gray" }}>A short lebel to identify the types of event, 10 character max</p>
+                                                <input type="text" class="input-select" onChange={(e) => setLebel(e.target.value)} />
+                                                <span style={{ color: "red" }}>{LError}</span>
                                             </div>
                                         </div>
-                                      
+
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
-                                            <label>Date</label>
-                                            <input type="date"  onChange={(e) => setStartDate(e.target.value)} class="input-select"/>
+                                                <label>Date</label>
+                                                <input type="date" onChange={(e) => setStartDate(e.target.value)} class="input-select" />
+                                                <span style={{ color: "red" }}>{starDateError}</span>
                                             </div>
+
+
                                         </div>
-                                   
+
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
-                                            <label>Time <span style={{ color: "gray" }}>(Leave Blank for "TBD")</span></label>
-                                            <input type="time"  onChange={(e) => setTime(e.target.value)} class="input-select"/>
-                                            <p style={{ color: "gray" }}>Pacific Time (US & Canada)<span style={{ color: "red" }}>Change</span></p>
+                                                <label>Time <span style={{ color: "gray" }}>(Leave Blank for "TBD")</span></label>
+                                                <input type="time" onChange={(e) => setTime(e.target.value)} class="input-select" />
+                                                <p style={{ color: "gray" }}>Pacific Time (US & Canada)<span style={{ color: "red" }}>Change</span></p>
                                             </div>
+                                            <span style={{ color: "red" }}>{timeError}</span>
+
                                         </div>
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
                                                 <label>Team</label>
                                                 {/* <input type="text" class="input-select" onChange={(e) => setOponent(e.target.value)} /> */}
-                                                <select class="input-select" onChange={changeTeam}>
+                                                <select class="input-select" onChange={(e)=>setOwnDropDown(e.target.value)}>
                                                     <option value="">Select A Team </option>
                                                     {dropdown.map((dropdown) => {
                                                         return (
@@ -476,13 +597,14 @@ const NewEvent = () => {
                                                         )
                                                     })}
                                                 </select>
+                                                <span style={{ color: "red" }}>{ownError}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
                                                 <label>Oponent</label>
                                                 {/* <input type="text" class="input-select" onChange={(e) => setOponent(e.target.value)} /> */}
-                                                <select class="input-select" onChange={changeOponent} >
+                                                <select class="input-select" onChange={(e)=>setOponentDropDown(e.target.value)} >
                                                     <option value="">Select Oponent Team </option>
                                                     {dropdown.map((dropdown) => {
                                                         return (
@@ -493,6 +615,7 @@ const NewEvent = () => {
                                                         )
                                                     })}
                                                 </select>
+                                                <span style={{ color: "red" }}>{OpError}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -500,12 +623,14 @@ const NewEvent = () => {
                                                 <label>Location</label>
                                                 <input type="text" class="input-select" onChange={(e) => setLocation(e.target.value)} />
                                             </div>
+                                            <span style={{ color: "red" }}>{LocError}</span>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
                                                 <label>Location Details</label>
                                                 <input type="text" class="input-select" onChange={(e) => setLocationDetails(e.target.value)} />
                                             </div>
+                                            <span style={{ color: "red" }}>{locaDError}</span>
                                         </div>
 
                                         <div class="col-md-3">
@@ -513,12 +638,14 @@ const NewEvent = () => {
                                                 <label>Start Time</label>
                                                 <input type="time" class="input-select" onChange={(e) => setStartTime(e.target.value)} />
                                             </div>
+                                            <span style={{ color: "red" }}>{stiemError}</span>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="prefarance-form-list">
                                                 <label >End Time</label>
                                                 <input type="time" class="input-select" onChange={(e) => setEndTime(e.target.value)} />
                                             </div>
+                                            <span style={{ color: "red" }}>{etimeError}</span>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
@@ -526,6 +653,7 @@ const NewEvent = () => {
                                                 <input type="time" class="input-select" onChange={(e) => setArrivalTime(e.target.value)} />
                                                 <p style={{ color: "gray" }}> minutes befor the starting  time</p>
                                             </div>
+                                            <span style={{ color: "red" }}>{arrivError}</span>
                                         </div>
 
                                         <div class="col-md-6">
@@ -550,6 +678,7 @@ const NewEvent = () => {
 
 
                                                 </div>
+                                                <span style={{ color: "red" }}>{flagError}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -557,6 +686,7 @@ const NewEvent = () => {
                                                 <label >Notes</label>
                                                 <input type="text" class="input-select" style={{ height: "150px" }} onChange={(e) => setNote(e.target.value)} />
                                             </div>
+                                            <span style={{ color: "red" }}>{noteError}</span>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="prefarance-form-list">
@@ -570,6 +700,7 @@ const NewEvent = () => {
                                                 <label>Assignment</label>
                                                 <input type="text" class="input-select" onChange={(e) => setAssingment(e.target.value)} />
                                             </div>
+                                            <span style={{ color: "red" }}>{assignError}</span>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
@@ -577,13 +708,14 @@ const NewEvent = () => {
                                                 <input type="text" class="input-select" onChange={(e) => setUniform(e.target.value)} />
                                                 <p style={{ color: "red", fontSize: "15px", float: "right" }}>+Add Another</p>
                                             </div>
+                                            <span style={{ color: "red" }}>{uniError}</span>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="prefarance-form-list">
                                                 <input type="checkbox" style={{ height: "15px", width: "17px" }} onClick={() => setCheck(check == "true" ? "false" : "true")} />
                                                 <span style={{ color: "white" }}> Notify Your Team?</span>
                                                 <button class="add-links" style={{ margin: "10px" }}>Cancel</button>
-                                                <button class="add-links" style={{ margin: "10px", backgroundColor: "#1d1b1b" }} onClick={CheckValidatiion}>Save</button>
+                                                <button class="add-links" style={{ margin: "10px", backgroundColor: "#1d1b1b" }} onClick={eventCreate}>Save</button>
                                                 <button style={{ backgroundColor: "#1d1b1b", padding: "13px", borderRadius: "30px", margin: "10px", color: "white" }}>+Save and Create Another</button>
                                             </div>
                                         </div>

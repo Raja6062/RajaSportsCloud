@@ -29,6 +29,7 @@ const CreateTeam = (props) => {
     const dispatch = useDispatch()
     const [userMe, setUser] = useState(null);
     const [user, setUserData] = useState({});
+    const [loader, setLoader] = useState(false)
     const [zip, setZip] = useState()
     const [language, setLanguage] = useState()
     const [teamName, setTeamName] = useState()
@@ -40,6 +41,16 @@ const CreateTeam = (props) => {
     const [dropdown, setDropdown] = useState([])
     const [teamDropdown, setTeamDropDown] = useState("")
     const pic = 'https://nodeserver.mydevfactory.com:1447/'
+    const pic1 = "https://nodeserver.mydevfactory.com:1447/profilepic/"
+    const [teamError, setTeamError] = useState("")
+    const [sportError, setSportError] = useState("")
+    const [timezoneError, setTimeZoneError] = useState("")
+    const [countryError, setCountryError] = useState("")
+    const [zipError, setZipError] = useState("")
+    const [languageError, setLanguageError] = useState("")
+    const [parentError, setParentNameError] = useState("")
+
+
 
     useEffect(() => {
 
@@ -48,7 +59,6 @@ const CreateTeam = (props) => {
         let userD = userLocal && userLocal._id ? true : false;
         setUser(userD);
         setUserData(userLocal);
-        createTeamData()
         updateProfile()
         dropdownMenu()
 
@@ -75,6 +85,7 @@ const CreateTeam = (props) => {
                 .then(async (res) => {
                     console.log("new Profile Pic----", res)
                     setProfilePic(res.response_data)
+                    setLoader(true)
 
                 })
         }
@@ -119,50 +130,111 @@ const CreateTeam = (props) => {
     }
 
     const createTeamData = () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': user.authtoken
-            },
-            body: JSON.stringify({
-                "team_name": teamName,
-                "team_manager_id": user._id,
-                "sports": sport,
-                "time_zone": timeZone,
-                "country": country,
-                "zip": zip,
-                "language": language,
-                "parentName": parentName
-            })
-        };
-        fetch('https://nodeserver.mydevfactory.com:1447/api/create-team', requestOptions)
-            .then(response => response.json())
-            .then((res) => {
-                console.log("create team data", res)
-                if (res.response_code == 4000) {
-                    dispatch(logoutUser(null))
-                    localStorage.removeItem("user");
-                    history.push("/")
-                    toast.error(res.response_message)
-                }
-            })
+        if (CheckValidatiion()) {
+
+            const user = JSON.parse(localStorage.getItem('user'));
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': user.authtoken
+                },
+                body: JSON.stringify({
+                    "team_name": teamName,
+                    "team_manager_id": user._id,
+                    "sports": sport,
+                    "time_zone": timeZone,
+                    "country": country,
+                    "zip": zip,
+                    "language": language,
+                    "parentName": parentName
+                })
+            };
+            fetch('https://nodeserver.mydevfactory.com:1447/api/create-team', requestOptions)
+                .then(response => response.json())
+                .then((res) => {
+                    console.log("create team data", res)
+                    if (res.response_code == 2000) {
+                        history.push("/")
+                        setCountry("")
+                        setLanguage("")
+                        setParentName("")
+                        setSport("")
+                        setTimeZone("")
+                        setZip("")
+
+                    }
+                    else {
+                        toast.error(res.response_message)
+                    }
+                    if (res.response_code == 4000) {
+                        dispatch(logoutUser(null))
+                        localStorage.removeItem("user");
+                        history.push("/")
+                        toast.error(res.response_message)
+                    }
+                })
+
+        }
 
     }
 
 
     const CheckValidatiion = () => {
-
-        if (teamName && sport && timeZone && country && zip && language && parentName) {
-            createTeamData()
-
-            return
+        let isValid = true
+        if (teamName == null) {
+            isValid = false
+            setTeamError(" Team Name is required")
         }
         else {
-            toast.error("Please Provide All Field")
-
+            setTeamError("")
         }
+        if (sport == null) {
+            isValid = false
+            setSportError(" Please Select Sports Type")
+        }
+        else {
+            setSportError("")
+        }
+        if (timeZone == null) {
+            isValid = false
+            setTimeZoneError("Please Select TimeZone ")
+        }
+        else {
+            setTimeZoneError("")
+        }
+        if (country == null) {
+            isValid = false
+            setCountryError(" Country Name is required")
+        }
+        else {
+            setCountryError("")
+        }
+        if (zip == null) {
+            isValid = false
+            setZipError("Zip is required")
+        }
+
+        else {
+            setZipError("")
+        }
+        if (language == null) {
+            isValid = false
+            setLanguageError(" Language is required")
+        }
+        else {
+            setLanguageError("")
+        }
+        if (parentName == null) {
+            isValid = false
+            setParentNameError(" ParentName is required")
+        }
+        else {
+            setParentNameError("")
+        }
+
+        return isValid
+
 
 
 
@@ -226,11 +298,14 @@ const CreateTeam = (props) => {
                                 </div>
                             </div>
                             <div class="profile-head">
-                                <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div>
+                                {loader ?
+                                    <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div> :
+                                    <div class="profile-head-name">Loading...</div>}
+
                                 <div class="profile-head-img">
                                     {profilePic.profile_image == null ?
                                         <img src={BigUserProfile} alt="" /> :
-                                        <img src={`${pic}${profilePic.profile_image}`} alt="" />
+                                        <img src={`${pic1}${profilePic.profile_image}`} alt="" />
                                     }
 
                                 </div>
@@ -279,38 +354,48 @@ const CreateTeam = (props) => {
                                                     <option>FRENCH</option>
                                                     <option>TELUGU</option>
                                                 </select>
+                                                <span style={{ color: "red" }}>{languageError}</span>
                                                 <label>Team Name</label>
                                                 <input type="text" class="input-select" onChange={(e) => setTeamName(e.target.value)} />
+                                                <span style={{ color: "red" }}>{teamError}</span>
                                                 <label>Player Parent Name</label>
                                                 <input type="text" class="input-select" onChange={(e) => setParentName(e.target.value)} />
+                                                <span style={{ color: "red" }}>{parentError}</span>
                                                 <label>Sport</label>
                                                 <select class="input-select" onChange={(e) => setSport(e.target.value)}>
+                                                    <option>Select</option>
                                                     <option>Football</option>
                                                     <option>Cricket</option>
                                                     <option>Badminton</option>
                                                 </select>
+                                                <span style={{ color: "red" }}>{sportError}</span>
                                                 {/* <input type="text" class="input-select" onChange={(e) => setSport(e.target.value)}/> */}
 
                                                 <label>Country</label>
                                                 <select class="input-select" onChange={(e) => setCountry(e.target.value)}>
+                                                    <option>Select</option>
                                                     <option>India</option>
                                                     <option>America</option>
                                                     <option>South Africa</option>
                                                 </select>
-                                                <div>
+                                                <span style={{ color: "red" }}>{countryError}</span>
+                                                {/* <div>
                                                     <GooglePlacesAutocomplete
                                                         apiKey="AIzaSyB_Ve5EsMrUcHRCZHxkZeSdz24emqo4X6Y"
                                                     />
-                                                </div>
+                                                </div> */}
                                                 <label>Time Zone</label>
                                                 <select class="input-select" onChange={(e) => setTimeZone(e.target.value)}>
+                                                    <option>Select</option>
                                                     <option>Time Zone1</option>
                                                     <option>Time Zone2</option>
                                                     <option>Time Zone3</option>
                                                 </select>
+                                                <span style={{ color: "red" }}>{timezoneError}</span>
 
                                                 <label>Zip Code</label>
                                                 <input type="text" class="input-select" onChange={(e) => setZip(e.target.value)} />
+                                                <span style={{ color: "red" }}>{zipError}</span>
 
                                                 {/* <input type="text" class="input-select" onChange={(e) => setTimeZone(e.target.value)}/> */}
                                             </div>
@@ -325,7 +410,7 @@ const CreateTeam = (props) => {
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="prefarance-form-list">
-                                                    <button class="add-links" style={{ backgroundColor: "#181717", marginLeft: "5px" }} onClick={CheckValidatiion} >SAVE</button>
+                                                    <button class="add-links" style={{ backgroundColor: "#181717", marginLeft: "5px" }} onClick={createTeamData} >SAVE</button>
                                                 </div>
                                             </div>
                                         </div>

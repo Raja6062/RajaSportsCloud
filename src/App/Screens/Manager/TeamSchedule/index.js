@@ -55,8 +55,10 @@ function TeamSchdule(props) {
     const [volenteerUpdate, setVolenteerUpdate] = useState('')
     const [flag, setFlagList] = useState([])
     const [flagId, setFlagId] = useState("")
+    const [loader, setLoader] = useState(false)
 
     const pic = 'https://nodeserver.mydevfactory.com:1447/'
+    const pic1 = "https://nodeserver.mydevfactory.com:1447/profilepic/"
 
     useEffect(() => {
         // let user = userdata && userdata._id ? true : false;
@@ -359,11 +361,14 @@ function TeamSchdule(props) {
                                 </div>
                             </div>
                             <div class="profile-head">
-                                <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div>
+                                {loader ?
+                                    <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div> :
+                                    <div class="profile-head-name">Loading...</div>}
+
                                 <div class="profile-head-img">
                                     {profilePic.profile_image == null ?
                                         <img src={BigUserProfile} alt="" /> :
-                                        <img src={`${pic}${profilePic.profile_image}`} alt="" />
+                                        <img src={`${pic1}${profilePic.profile_image}`} alt="" />
                                     }
 
                                 </div>

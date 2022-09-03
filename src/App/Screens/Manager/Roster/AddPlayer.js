@@ -59,7 +59,20 @@ const AddPlayer = () => {
     const [profilePic, setProfilePic] = useState([])
     const [team, setTeam] = useState([])
     const [loader, setLoader] = useState(false)
-    const [playerType,setPlayerType]=useState(false)
+    const [playerType, setPlayerType] = useState(false)
+    const[birthError,setBirthError] =useState("")
+    const[stateError,setStateError] =useState("")
+    const[phoneError,setPhoneError] =useState("")
+    const[jurseyError,setJurseyError] =useState("")
+    const[possitionError,setPossitionError] =useState("")
+    const[emailError,setEmailError] =useState("")
+    const[fnameError,setFnameError] =useState("")
+    const[genderError,setGenderError] =useState("")
+    const[lanmeError,setLnameError] =useState("")
+    const[cityError,setCityError] =useState("")
+    const[zipErroe,setZipError] =useState("")
+
+
 
     useEffect(() => {
 
@@ -99,137 +112,160 @@ const AddPlayer = () => {
 
 
     const playerData = () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': user.authtoken
-            },
-            body: JSON.stringify({
-                "email": email,
-                "fname": fname,
-                "lname": lname,
-                "team_id": teamDropdown,
-                "gender": gender,
-                "city": city,
-                "zip": zip,
-                "dob": birthday,
-                "state": state,
-                "address": address,
-                "phone": phone,
-                "member_type": playerType ? "PLAYER" : "NON-PLAYER",
-                "jersey_number": jursey,
-                "position": position,
-                "family_member": [{ "name": "Krishna Das", "email": "angelinaKoli@gmail.com", "phone": 123453, "relation": "DAD" }]
-            })
-
-
-        };
-        fetch('https://nodeserver.mydevfactory.com:1447/api/add-player-roster', requestOptions)
-            .then(response => response.json())
-            .then((res) => {
-                console.log("player data", res)
-
-                if (res.response_code == 4000) {
-                    dispatch(logoutUser(null))
-                    localStorage.removeItem("user");
-                    history.push("/")
-                    toast.error(res.response_message)
-                }
-            })
-
+        if(CheckValidatiion()){
+            const user = JSON.parse(localStorage.getItem('user'));
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': user.authtoken
+                },
+                body: JSON.stringify({
+                    "email": email,
+                    "fname": fname,
+                    "lname": lname,
+                    "team_id": teamDropdown,
+                    "gender": gender,
+                    "city": city,
+                    "zip": zip,
+                    "dob": birthday,
+                    "state": state,
+                    "address": address,
+                    "phone": phone,
+                    "member_type": playerType ? "PLAYER" : "NON-PLAYER",
+                    "jersey_number": jursey,
+                    "position": position,
+                    "family_member": [{ "name": "Krishna Das", "email": "angelinaKoli@gmail.com", "phone": 123453, "relation": "DAD" }]
+                })
+    
+    
+            };
+            fetch('https://nodeserver.mydevfactory.com:1447/api/add-player-roster', requestOptions)
+                .then(response => response.json())
+                .then((res) => {
+                    console.log("player data", res)
+                     if(res.response_code==2000){
+                        history.push("./ManagerRoster")
+                     }
+                     else{
+                        toast.error(res.response_message)
+                     }
+                    if (res.response_code == 4000) {
+                        dispatch(logoutUser(null))
+                        localStorage.removeItem("user");
+                        history.push("/")
+                        toast.error(res.response_message)
+                    }
+                })
+    
+        }
+       
     }
 
 
 
     const CheckValidatiion = () => {
-
+        let isValid = true
         if (email == null) {
-            toast.error("Please Provide  Email", {
-                position: "top-center"
-            })
-           
+            isValid = false
+            setEmailError("Please Provide  Email")
+
         }
-        if(email){
+        else {
+            setEmailError("")
+        }
+        if (email) {
             if (validator.isEmail(email)) {
                 console.log(email)
             }
             else {
-                toast.error("Please Provide Valid Email", {
-                    position: "top-center"
-                })
+                setEmailError("Please Provide Valid Email")
             }
 
         }
-       
+
 
 
         if (fname == null) {
-            toast.error("Please Provide First Name", {
-                position: "top-center"
-            })
+            isValid = false
+            setFnameError("Please Provide First Name")
+        }
+        else {
+            setFnameError("")
         }
         if (lname == null) {
-            toast.error("Please Provide Last Name", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setLnameError("Please Provide Last Name")
+
+        }
+        else {
+            setLnameError("")
         }
         if (gender == null) {
-            toast.error("Please Select Your Gender", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setGenderError("Please Select Your Gender")
+        }
+        else {
+            setGenderError("")
         }
         if (city == null) {
-            toast.error("Please Select City Name", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setCityError("Please Select City Name")
+
+        }
+        else {
+            setCityError("")
         }
         if (zip == null) {
-            toast.error("Please Provide Zip Code", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setZipError("Please Provide Zip Code")
+
+        }
+        else {
+            setZipError("")
         }
         if (birthday == null) {
-            toast.error("Please Select Birthday", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setBirthError("Please Select Birthday")
+        }
+        else {
+            setBirthError("")
         }
         if (state == null) {
-            toast.error("Please Select State", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setStateError("Please Select State")
+        }
+        else {
+            setStateError("")
         }
         if (phone == null) {
-            toast.error("Please Select Phone Number", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setPhoneError("Please Select Phone Number")
+
+        }
+        else {
+            setPhoneError("")
         }
         if (jursey == null) {
-            toast.error("Please Provide Jursey Number", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setJurseyError("Please Provide Jursey Number")
+        }
+        else {
+            setJurseyError("")
         }
         if (position == null) {
-            toast.error("Please Provide  Position", {
-                position: "top-center"
-            })
-            return
+            isValid = false
+            setPossitionError("Please Provide  Position")
+        }
+        else {
+            setPossitionError("")
         }
 
 
 
 
-        playerData()
-        
+        return isValid
+
 
 
     }
@@ -491,6 +527,7 @@ const AddPlayer = () => {
                                             <div class="prefarance-form-list">
                                                 <label> First Name</label>
                                                 <input type="text" class="input-select" onChange={(e) => setFName(e.target.value)} />
+                                                <span style={{color:"red"}}> {fnameError}</span>
                                             </div>
                                         </div>
 
@@ -499,13 +536,13 @@ const AddPlayer = () => {
                                             <div class="prefarance-form-list">
                                                 <label>Last Name</label>
                                                 <input type="text" class="input-select" onChange={(e) => setLName(e.target.value)} />
-
+                                                <span style={{color:"red"}}> {lanmeError}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="prefarance-form-list">
                                                 <label>Non Player</label>
-                                                <input type="checkbox" style={{ height: "15px", width: "17px" }} onClick={()=>setPlayerType(!playerType)} />
+                                                <input type="checkbox" style={{ height: "15px", width: "17px" }} onClick={() => setPlayerType(!playerType)} />
                                                 <span style={{ color: "white" }}>This person is a non playing player of the team </span>
 
                                             </div>
@@ -514,6 +551,7 @@ const AddPlayer = () => {
                                             <div class="prefarance-form-list">
                                                 <label>Email</label>
                                                 <input type="text" class="input-select" onChange={(e) => setEmail(e.target.value)} />
+                                                <span style={{color:"red"}}> {emailError}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -536,6 +574,7 @@ const AddPlayer = () => {
                                             <div class="prefarance-form-list">
                                                 <label>Phone Number</label>
                                                 <input type="text" class="input-select" onChange={(e) => setPhone(e.target.value)} />
+                                                <span style={{color:"red"}}> {phoneError}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -565,19 +604,21 @@ const AddPlayer = () => {
                                             <div class="prefarance-form-list">
                                                 <label>City</label>
                                                 <input type="text" class="input-select" onChange={(e) => setCity(e.target.value)} />
+                                                <span style={{color:"red"}}> {cityError}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
                                                 <label >State/Province</label>
                                                 <input type="text" class="input-select" onChange={(e) => setState(e.target.value)} />
+                                                <span style={{color:"red"}}> {stateError}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
                                                 <label>Zip/Postal Code</label>
                                                 <input type="text" class="input-select" onChange={(e) => setZip(e.target.value)} />
-
+                                                <span style={{color:"red"}}> {zipErroe}</span>
                                             </div>
                                         </div>
 
@@ -589,7 +630,7 @@ const AddPlayer = () => {
                                                     <option>MALE</option>
                                                     <option>FEMALE</option>
                                                 </select>
-                                                
+                                                <span style={{color:"red"}}> {genderError}</span>
 
                                             </div>
                                         </div>
@@ -598,7 +639,8 @@ const AddPlayer = () => {
                                             <div class="prefarance-form-list">
                                                 <label>Birthday</label>
                                                 <div class="input-select" >
-                                                    <input type="date" class="input-select" onChange={(e) => setBirthday(e.target.value)} style={{ border: "none" }} />
+                                                    <input type="date" class="input-select" onChange={(e) => setBirthday(e.target.value)} style={{ border: "none" }} />                                                
+                                                <span style={{color:"red"}}> {birthError}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -606,12 +648,14 @@ const AddPlayer = () => {
                                             <div class="prefarance-form-list">
                                                 <label >Jursey Number</label>
                                                 <input type="text" class="input-select" onChange={(e) => setJursey(e.target.value)} />
+                                                <span style={{color:"red"}}> {jurseyError}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list">
                                                 <label >Position</label>
                                                 <input type="text" class="input-select" onChange={(e) => setPosition(e.target.value)} />
+                                                <span style={{color:"red"}}> {possitionError}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -635,9 +679,9 @@ const AddPlayer = () => {
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="prefarance-form-list">
+                                            <div class="prefarance-form-list" style={{ paddingBottom: "13px" }}>
                                                 <button class="add-links">CANCEL</button>
-                                                <button class="add-links" style={{ backgroundColor: "#181717", marginLeft: "4px" }} onClick={CheckValidatiion}>SAVE</button>
+                                                <button class="add-links" style={{ backgroundColor: "#181717", marginLeft: "4px" }} onClick={playerData}>SAVE</button>
                                             </div>
                                         </div>
                                     </div>
