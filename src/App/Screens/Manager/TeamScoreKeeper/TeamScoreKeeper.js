@@ -35,7 +35,7 @@ const TeamScorekeeper = () => {
     const [userMe, setUser] = useState(null);
     const [user, setUserData] = useState({});
     const [dropdown, setDropdown] = useState([])
-    const[locationValue,setLocationValue] =useState([])
+    const [locationValue, setLocationValue] = useState([])
 
     useEffect(() => {
         setUser(user);
@@ -46,7 +46,7 @@ const TeamScorekeeper = () => {
         setUserData(userLocal);
         dropdownMenu()
         LocationData()
-        
+
 
     }, []);
     const handleLogout = () => {
@@ -77,7 +77,7 @@ const TeamScorekeeper = () => {
                     }
                     setDropdown(res.response_data);
 
-                   
+
 
 
 
@@ -107,7 +107,7 @@ const TeamScorekeeper = () => {
                     }
                     setLocationValue(res.response_data);
 
-                   
+
 
 
 
@@ -121,7 +121,7 @@ const TeamScorekeeper = () => {
 
     const change = (event) => {
         console.log("event", event.target.value)
-       
+
 
     }
 
@@ -130,19 +130,19 @@ const TeamScorekeeper = () => {
         <div>
             <div class="dashboard-container">
                 <div class="dashboard-main">
-                    <SideMenuComponents manger="manger"/>
+                    <SideMenuComponents manger="manger" />
                     <div class="dashboard-main-content">
                         <div class="dashboard-head">
                             <div class="teams-select">
-                            <select onChange={change} >
+                                <select onChange={change} >
 
-<option>Select A Team</option>
-{dropdown.map((dropdown) => {
-  return (
-    <option value={dropdown._id}>{dropdown.team_name}</option>
-  )
-})}
-</select>
+                                    <option>Select A Team</option>
+                                    {dropdown.map((dropdown) => {
+                                        return (
+                                            <option value={dropdown._id}>{dropdown.team_name}</option>
+                                        )
+                                    })}
+                                </select>
                             </div>
 
                             <div class="profile-head">
@@ -171,12 +171,12 @@ const TeamScorekeeper = () => {
                             <div class="teams-select3" style={{ marginRight: "37%" }}>
                                 <select>
                                     <option>Location</option>
-                                    {locationValue.map((data)=>{
-                                        return(
+                                    {locationValue.map((data) => {
+                                        return (
                                             <option>{data.locationName},{data.address}</option>
                                         )
                                     })}
-                                   
+
                                 </select>
                             </div>
 
@@ -192,7 +192,7 @@ const TeamScorekeeper = () => {
 
                         <div class="prefarance-box">
                             <div class="team-payment team-assesment">
-                                <table style={{textAlign:"center"}}>
+                                <table style={{ textAlign: "center" }}>
                                     <tr>
                                         <th style={{ fontSize: "30px" }}>Players</th>
                                         <th style={{ fontSize: "30px" }}>2 Pointers</th>
@@ -234,47 +234,47 @@ const TeamScorekeeper = () => {
                         </div>
 
                         <div class="prefarance-box">
-                                <div class="team-payment team-assesment">
-                                    <table style={{textAlign:"center"}}>
-                                        <tr>
-                                            <th style={{fontSize:"30px"}}>Non-Players</th>
-                                            <th style={{fontSize:"30px"}}>2 Pointers</th>
-                                            <th style={{fontSize:"30px"}}>3 Pointers</th>
-                                            <th style={{fontSize:"30px"}}>Free Throws</th>
-                                            
-                                        </tr>
+                            <div class="team-payment team-assesment">
+                                <table style={{ textAlign: "center" }}>
+                                    <tr>
+                                        <th style={{ fontSize: "30px" }}>Non-Players</th>
+                                        <th style={{ fontSize: "30px" }}>2 Pointers</th>
+                                        <th style={{ fontSize: "30px" }}>3 Pointers</th>
+                                        <th style={{ fontSize: "30px" }}>Free Throws</th>
 
-                                        <tr>
-                                            
-                                            <td>
-                                                <img src={UserProfile} alt="" />
-                                                <span>Jayanta Karmakor</span>
+                                    </tr>
 
-                                            </td>
-                                            <td>
-                                                2
-                                            </td>
-                                            <td>
-                                                <span>1</span>
-                                            </td>
-                                            <td>2
+                                    <tr>
 
-                                            </td>
-                                            <td>
-                                                <div class="last-row">
-                                                     <button data-toggle="modal" data-target="#assignmentdelect"><img src={Delect} /></button> <button><img src={pencil} /></button>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        <td>
+                                            <img src={UserProfile} alt="" />
+                                            <span>Jayanta Karmakor</span>
 
+                                        </td>
+                                        <td>
+                                            2
+                                        </td>
+                                        <td>
+                                            <span>1</span>
+                                        </td>
+                                        <td>2
 
+                                        </td>
+                                        <td>
+                                            <div class="last-row">
+                                                <button data-toggle="modal" data-target="#assignmentdelect"><img src={Delect} /></button> <button><img src={pencil} /></button>
+                                            </div>
+                                        </td>
+                                    </tr>
 
 
 
 
-                                    </table>
-                                </div>
+
+
+                                </table>
                             </div>
+                        </div>
 
 
 

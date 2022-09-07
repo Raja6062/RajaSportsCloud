@@ -680,7 +680,7 @@ const AddPlayer = () => {
                                         </div>
                                         <div class="col-md-6">
                                             <div class="prefarance-form-list" style={{ paddingBottom: "13px" }}>
-                                                <button class="add-links">CANCEL</button>
+                                                <button class="add-links" onClick={()=>history.push("./ManagerRoster")}>CANCEL</button>
                                                 <button class="add-links" style={{ backgroundColor: "#181717", marginLeft: "4px" }} onClick={playerData}>SAVE</button>
                                             </div>
                                         </div>

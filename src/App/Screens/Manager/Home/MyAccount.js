@@ -64,14 +64,14 @@ const MyAccount = () => {
     const [private3, setPrivate3] = useState(false)
     const [private4, setPrivate4] = useState(false)
     const [private5, setPrivate5] = useState(false)
-   
+
     const [profilePicture, setProfilePicture] = useState('')
     const [profilePic, setProfilePic] = useState([])
 
     const [file, Profile] = useState();
     const pic = 'https://nodeserver.mydevfactory.com:1447/profilepic/'
-    console.log("email",email)
-    console.log("fname",firstName ==""? allUserDataList.fname:firstName)
+    console.log("email", email)
+    console.log("fname", firstName == "" ? allUserDataList.fname : firstName)
 
 
     useEffect(() => {
@@ -252,24 +252,24 @@ const MyAccount = () => {
                 'x-access-token': user.authtoken
             },
             body: JSON.stringify({
-                "firstName": firstName ==null? allUserDataList.fname:firstName,
-                "lastName": lastName ==null? allUserDataList.lname:lastName,
-                "email": email ==null? allUserDataList.email:email,
-                "dob": birthday ==null? allUserDataList.dob:birthday,
-                "phone": number1 ==null ? allUserDataList.phone:number1,
-                "gender": gender ==null? allUserDataList.gender:gender,
-                "alternative_phone": number2 ==null? allUserDataList.alternative_phone:number2,
-                "address_line_one": address1 ==null? allUserDataList.address_line_one:address1,
-                "address_line_two": address2 ==null? allUserDataList.address_line_two:address2,
-                "city": city ==null? allUserDataList.city:city,
-                "state": state1 ==null? allUserDataList.state:state1,
-                "zip": zip ==null? allUserDataList.zip:zip,
-                "country": country ==null? allUserDataList.country:country,
-                "hide_age": private1 ,
-                "email_is_private": private5 ,
-                "alternative_phone_is_private": private2 ,
-                "phone_is_private": private3 ,
-                "address_is_private": private4 
+                "firstName": firstName == null ? allUserDataList.fname : firstName,
+                "lastName": lastName == null ? allUserDataList.lname : lastName,
+                "email": email == null ? allUserDataList.email : email,
+                "dob": birthday == null ? allUserDataList.dob : birthday,
+                "phone": number1 == null ? allUserDataList.phone : number1,
+                "gender": gender == null ? allUserDataList.gender : gender,
+                "alternative_phone": number2 == null ? allUserDataList.alternative_phone : number2,
+                "address_line_one": address1 == null ? allUserDataList.address_line_one : address1,
+                "address_line_two": address2 == null ? allUserDataList.address_line_two : address2,
+                "city": city == null ? allUserDataList.city : city,
+                "state": state1 == null ? allUserDataList.state : state1,
+                "zip": zip == null ? allUserDataList.zip : zip,
+                "country": country == null ? allUserDataList.country : country,
+                "hide_age": private1,
+                "email_is_private": private5,
+                "alternative_phone_is_private": private2,
+                "phone_is_private": private3,
+                "address_is_private": private4
             })
         };
         fetch('https://nodeserver.mydevfactory.com:1447/api/edit-user-details', requestOptions)
@@ -332,7 +332,7 @@ const MyAccount = () => {
             toast.error("Please Provide  Email", {
                 position: "top-center"
             })
-            
+
         }
 
 
@@ -418,62 +418,62 @@ const MyAccount = () => {
         <div class="prefarance-box player-info" style={{ height: "100%", marginTop: "0px", borderRadius: "0px" }}>
             <SideMenuComponents manger="manger" />
             <div class="dashboard-main-content">
-            <div class="dashboard-head">
-                            <div class="teams-select">
-                                <button class="create-new-team" onClick={() => {
-                                    history.push("/CreateTeam")
-                                }}>Create New Teams</button>
-                                <select onChange={change} value={teamDropdown == "" ? dropdown[0]?._id : teamDropdown} >
-                                    {dropdown.map((dropdown) => {
-                                        return (
-                                            <option value={dropdown._id}>{dropdown.team_name}</option>
-                                        )
-                                    })}
-                                </select>
-                                <div className="dropBtn">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style={{ backgroundColor: "#2C2C2C", border: "none" }}>
-                                        ACCOUNT
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={{ backgroundColor: "#484848", listStyle: "none", margin: "14px" }}>
-                                        <li><a class="dropdown-item" href="#">{profilePic.fname + " " + profilePic.lname}</a></li>
-                                        <Link to={{ pathname: "/MyAccount" }} >
-                                            <li><a class="dropdown-item" href="#">My Account</a></li>
-                                        </Link>
-                                        <Link to={{ pathname: "/Credit" }} >
-                                            <li><a class="dropdown-item" href="#">Credits</a></li>
-                                        </Link>
-                                        <Link to={{ pathname: "/Household" }} >
-                                            <li><a class="dropdown-item" href="#">My HouseHold</a></li>
-                                        </Link>
-                                        <Link to={{ pathname: "/ManageTeam" }} >
-                                            <li><a class="dropdown-item" href="#">Manage My Team</a></li>
-                                        </Link>
-                                        <Link to={{ pathname: "/Biling" }} >
-                                            <li><a class="dropdown-item" href="#">Biling & Plans</a></li>
-                                        </Link>
-                                        <Link to={{ pathname: "/CreateTeam" }} >
-                                            <li><a class="dropdown-item" href="#">Create New Team</a></li>
-                                        </Link>
-                                        <Link to={{ pathname: "/SignOut" }} >
-                                            <li><a class="dropdown-item active" href="#">Sign Out</a></li>
-                                        </Link>
+                <div class="dashboard-head">
+                    <div class="teams-select">
+                        <button class="create-new-team" onClick={() => {
+                            history.push("/CreateTeam")
+                        }}>Create New Teams</button>
+                        <select onChange={change} value={teamDropdown == "" ? dropdown[0]?._id : teamDropdown} >
+                            {dropdown.map((dropdown) => {
+                                return (
+                                    <option value={dropdown._id}>{dropdown.team_name}</option>
+                                )
+                            })}
+                        </select>
+                        <div className="dropBtn">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style={{ backgroundColor: "#2C2C2C", border: "none" }}>
+                                ACCOUNT
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={{ backgroundColor: "#484848", listStyle: "none", margin: "14px" }}>
+                                <li><a class="dropdown-item" href="#">{profilePic.fname + " " + profilePic.lname}</a></li>
+                                <Link to={{ pathname: "/MyAccount" }} >
+                                    <li><a class="dropdown-item" href="#">My Account</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Credit" }} >
+                                    <li><a class="dropdown-item" href="#">Credits</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Household" }} >
+                                    <li><a class="dropdown-item" href="#">My HouseHold</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/ManageTeam" }} >
+                                    <li><a class="dropdown-item" href="#">Manage My Team</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Biling" }} >
+                                    <li><a class="dropdown-item" href="#">Biling & Plans</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/CreateTeam" }} >
+                                    <li><a class="dropdown-item" href="#">Create New Team</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/SignOut" }} >
+                                    <li><a class="dropdown-item active" href="#">Sign Out</a></li>
+                                </Link>
 
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="profile-head">
-                                <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div>
-                                <div class="profile-head-img">
-                                    {profilePic.profile_image == null ?
-                                        <img src={BigUserProfile} alt="" /> :
-                                        <img src={`${pic}${profilePic.profile_image}`} alt="" />
-                                    }
-
-                                </div>
-                            </div>
-                            <div class="login-account"><ul><li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li></ul></div>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="profile-head">
+                        <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div>
+                        <div class="profile-head-img">
+                            {profilePic.profile_image == null ?
+                                <img src={BigUserProfile} alt="" /> :
+                                <img src={`${pic}${profilePic.profile_image}`} alt="" />
+                            }
 
                         </div>
+                    </div>
+                    <div class="login-account"><ul><li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li></ul></div>
+
+                </div>
                 <div class="prefarance-page">
                     <div class="page-header">
                         <h2 class="page-title">My Account</h2>
@@ -527,9 +527,9 @@ const MyAccount = () => {
                                         <div class="prefarance-form-list">
                                             <label>Birthday</label>
                                             <div class="input-select" >
-                                                <input  type="date"  defaultValue class="input-select" onChange={(e) => setBirthday(e.target.value)} style={{ border: "none" }} 
-                                                value={allUserDataList.dob}/>
-                                            
+                                                <input type="date" defaultValue class="input-select" onChange={(e) => setBirthday(e.target.value)} style={{ border: "none" }}
+                                                    value={allUserDataList.dob} />
+
                                             </div>
                                         </div>
                                     </div>
@@ -538,8 +538,8 @@ const MyAccount = () => {
                                             <label>Gender</label>
                                             <select class="input-select" onChange={(e) => setGender(e.target.value)} defaultChecked={allUserDataList.gender}>
                                                 <option >{allUserDataList.gender}</option>
-                                                <option >{allUserDataList.gender=="Male"? "Female":"Male"}</option>
-                                                
+                                                <option >{allUserDataList.gender == "Male" ? "Female" : "Male"}</option>
+
                                             </select>
 
                                         </div>

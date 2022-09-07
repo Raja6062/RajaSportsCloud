@@ -155,7 +155,7 @@ function NewStatistic(props) {
         <div>
             <div class="dashboard-container">
                 <div class="dashboard-main">
-                    <SideMenuComponents />
+                <SideMenuComponents manger="manger" />
                     <div class="dashboard-main-content">
                         <div class="dashboard-head">
                             <div class="teams-select">

@@ -53,7 +53,7 @@ function Files(props) {
         <div>
             <div class="dashboard-container">
                 <div class="dashboard-main">
-                    <SideMenuComponents />
+                <SideMenuComponents manger="manger" />
                     <div class="dashboard-main-content">
                         <div class="dashboard-head">
                             <div class="teams-select">
@@ -93,7 +93,7 @@ function Files(props) {
                            <ul>
                                <li><a href="#" onClick={() => history.push("./TeamMedia")}>Stream</a></li>
                                <li><a href="#" onClick={() => history.push("./Photos")}>Photos</a></li>
-                               <li><a href="#" href="#" onClick={() => history.push("./Videos")}>Videos</a></li>
+                               <li><a href="#"  onClick={() => history.push("./Videos")}>Videos</a></li>
                                <li><a class="active" href="#">Files</a></li>
                            </ul>
                        </div>

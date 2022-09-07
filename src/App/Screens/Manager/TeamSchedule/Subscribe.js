@@ -24,6 +24,8 @@ import { Network } from '../../../Services/Api';
 import { useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import { logoutUser } from "../../../Redux/Actions/auth";
+import BigUserProfile from "../../../images/big-user-profile.png"
+
 
 
 
@@ -32,7 +34,7 @@ function Subscribe(props) {
 
     const history = useHistory();
     const dispatch = useDispatch()
-
+    const [loader, setLoader] = useState(false)
     const [userMe, setUser] = useState(null);
     const [user, setUserData] = useState({});
     const [schedule, setSchedule] = useState([])
@@ -41,6 +43,9 @@ function Subscribe(props) {
 
     const [valueDropDown, setValueDropDown] = useState("")
     const [eventType, setEventType] = useState()
+    const [profilePic, setProfilePic] = useState([])
+    const pic1 = "https://nodeserver.mydevfactory.com:1447/profilepic/"
+
 
 
 
@@ -55,6 +60,7 @@ function Subscribe(props) {
         let userD = userLocal && userLocal._id ? true : false;
         setUser(userD);
         setUserData(userLocal);
+        updateProfile()
 
         // teamSchedule();
 
@@ -67,6 +73,26 @@ function Subscribe(props) {
         setUserData(null);
         props.history.push("/")
     };
+    const updateProfile = () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            let header = {
+                'authToken': user.authtoken
+
+            }
+            console.log('user', user)
+
+            Network('api/get-user-details?user_id=' + user._id, 'GET', header)
+                .then(async (res) => {
+                    console.log("new Profile Pic----", res)
+                    setProfilePic(res.response_data)
+                    setLoader(true)
+
+                })
+        }
+
+    }
+
 
 
 
@@ -220,44 +246,67 @@ function Subscribe(props) {
         <div>
             <div class="dashboard-container">
                 <div class="dashboard-main">
-                    <SideMenuComponents />
+                <SideMenuComponents manger="manger" />
                     <div class="dashboard-main-content">
-                        <div class="dashboard-head">
-                            <div class="teams-select">
-                                <button class="create-new-team" onClick={() => history.push("./CreateTeam")}>Create New Teams</button>
+                    <div class="dashboard-head">
+                    <div class="teams-select">
+                        <button class="create-new-team" onClick={() => {
+                            history.push("/CreateTeam")
+                        }}>Create New Teams</button>
+                        <select onChange={change}>
+                            {dropdown.map((dropdown) => {
+                                return (
+                                    <option value={dropdown._id}>{dropdown.team_name}</option>
+                                )
+                            })}
+                        </select>
+                        <div className="dropBtn">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style={{ backgroundColor: "#2C2C2C", border: "none" }}>
+                                ACCOUNT
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={{ backgroundColor: "#484848", listStyle: "none", margin: "14px" }}>
+                                <li><a class="dropdown-item" href="#">Jayanta Karmakar</a></li>
+                                <Link to={{ pathname: "/MyAccount" }} >
+                                    <li><a class="dropdown-item" href="#">My Account</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Credit" }} >
+                                    <li><a class="dropdown-item" href="#">Credits</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Household" }} >
+                                    <li><a class="dropdown-item" href="#">My HouseHold</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/ManageTeam" }} >
+                                    <li><a class="dropdown-item" href="#">Manage My Team</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/Biling" }} >
+                                    <li><a class="dropdown-item" href="#">Biling & Plans</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/CreateTeam" }} >
+                                    <li><a class="dropdown-item" href="#">Create New Team</a></li>
+                                </Link>
+                                <Link to={{ pathname: "/SignOut" }} >
+                                    <li><a class="dropdown-item active" href="#">Sign Out</a></li>
+                                </Link>
 
-                                <select onChange={change} value={teamDropdown == "" ? dropdown[0]?._id : teamDropdown} >
-                                    {dropdown.map((dropdown) => {
-                                        return (
-                                            <option value={dropdown._id}>{dropdown.team_name}</option>
-                                        )
-                                    })}
-                                </select>
-                                <select>
-                                    <option>Account</option>
-                                    <option>Account 2</option>
-                                    <option>Account 3</option>
-                                </select>
-                            </div>
-
-                            <div class="profile-head">
-                                <div class="profile-head-name">{user ? user.fname : null}</div>
-                                <div class="profile-head-img">
-                                    {
-                                        user ?
-                                            <img src={user.profile_image} alt="" /> :
-                                            <img src={UserProfile} alt="" />
-                                    }
-
-                                </div>
-                            </div>
-                            <div class="login-account">
-                                <ul>
-                                    <li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li>
-                                    {/* <li><a href="#" data-toggle="modal" data-target="#myModalregister" onClick={handleLogout}>Logout</a></li> */}
-                                </ul>
-                            </div>
+                            </ul>
                         </div>
+                    </div>
+                    <div class="profile-head">
+                        {loader ?
+                            <div class="profile-head-name">{profilePic.fname + " " + profilePic.lname}</div> :
+                            <div class="profile-head-name">Loading...</div>}
+
+                        <div class="profile-head-img">
+                            {profilePic.profile_image == null ?
+                                <img src={BigUserProfile} alt="" /> :
+                                <img src={`${pic1}${profilePic.profile_image}`} alt="" />
+                            }
+
+                        </div>
+                    </div>
+                    <div class="login-account"><ul><li><a href="#" data-toggle="modal" data-target="#myModallogin" onClick={handleLogout}>Logout</a></li></ul></div>
+
+                </div>
 
                         <div class="prefarance-page">
                             <div class="page-header">
