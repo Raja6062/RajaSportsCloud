@@ -21,12 +21,12 @@ function Footer(props) {
 
     return (
         <center>
-            <div class="footer">
-                <div class="copy-right">
+            <div className="footer">
+                <div className="copy-right">
                     Copyright © 2020 Evolution Athletics  |  <a href="#">Privacy Policy</a>  |
                                                                  <a href="#">Terms of Service</a>
                 </div>
-                <div class="social-icon-footer">
+                <div className="social-icon-footer">
                     <p><a href="#"><img src={face} alt="" /></a> <a href="#"><img src={twitte} alt="" /></a> <a href="#"><img src={insta} alt="" /></a></p>
                 </div>
             </div>

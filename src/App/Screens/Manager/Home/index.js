@@ -158,7 +158,7 @@ function ManagerHome(props) {
           updateProfile()
         }
 
-        if (res.response_code == 4000) {
+        if (res.response_code == 400) {
           dispatch(logoutUser(null))
           localStorage.removeItem("user");
           history.push("/")
